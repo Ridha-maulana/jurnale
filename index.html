@@ -194,7 +194,7 @@ const CONTRACT_SIZES = { XAUUSD: 100, EURUSD: 100000, GBPUSD: 100000, USDJPY: 10
 const SYMBOLS = Object.keys(CONTRACT_SIZES);
 const money = (n, currency = 'USD') => new Intl.NumberFormat('en-US', { style: 'currency', currency, minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(Number(n) || 0);
 const number = n => new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(Number(n) || 0);
-const isoNow = () => new Date().toISOString().slice(0, 16);
+const isoNow = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16); }; // waktu lokal HP, bukan UTC
 const dateOnly = value => String(value || '').slice(0, 10);
 const uid = prefix => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 const seedTrades = [
@@ -281,7 +281,7 @@ function App() {
         return; const closed = !!data.exit; const fees = Number(data.fees) || 0; const trade = { ...old, ...data, entry: Number(data.entry), exit: closed ? Number(data.exit) : null, lots: Number(data.lots) || 0, sl: data.sl ? Number(data.sl) : null, tp: data.tp ? Number(data.tp) : null, fees, status: closed ? 'closed' : 'open', pnl: closed ? pnlFor({ ...data, fees }, data.exit) : 0, closeDate: closed ? (old.closeDate || data.date) : undefined }; persistTrades(trades.map(t => t.id === data.id ? trade : t)); setEditingTrade(null); notify('Trade diperbarui.'); }
     function deleteTrade(id) { persistTrades(trades.filter(t => t.id !== id)); setExpanded(null); }
     function exportCsv() { const header = 'Tanggal Entry,Tanggal Close,Symbol,Arah,Status,Entry,Exit,Lots,SL,TP,Exit Method,PnL,Fees,Setup,Review\n'; const body = trades.map(t => { var _a, _b, _c; return [t.date, t.closeDate || '', t.symbol, t.side, t.status, t.entry, (_a = t.exit) !== null && _a !== void 0 ? _a : '', t.lots, (_b = t.sl) !== null && _b !== void 0 ? _b : '', (_c = t.tp) !== null && _c !== void 0 ? _c : '', t.exitMethod || '', t.pnl, t.fees || 0, `"${String(t.setup || '').replaceAll('"', '""')}"`, `"${String(t.review || '').replaceAll('"', '""')}"`].join(','); }).join('\n'); saveFile(`edge-journal-${activeAccount.name.toLowerCase().replaceAll(' ', '-')}.csv`, header + body, 'text/csv'); }
-    function backupJson() { const stamp = new Date().toISOString().slice(0, 10); saveFile(`edge-journal-backup-${stamp}.json`, JSON.stringify({ version: 3, appVersion: APP_VERSION, exportedAt: new Date().toISOString(), activeAccountId, accounts }, null, 2), 'application/json'); }
+    function backupJson() { const stamp = isoNow().slice(0, 10); saveFile(`edge-journal-backup-${stamp}.json`, JSON.stringify({ version: 3, appVersion: APP_VERSION, exportedAt: new Date().toISOString(), activeAccountId, accounts }, null, 2), 'application/json'); }
     function restoreJson(file) { if (!file)
         return; const reader = new FileReader(); reader.onload = () => { var _a; try {
         const data = JSON.parse(reader.result);
@@ -1117,7 +1117,7 @@ function AddTradeModal({ account, onClose, onSave, initial }) {
                     " Kalkulasi tersimpan sebelum submit. ",
                     suggestedLots ? `Ukuran lot 1% risiko: ${suggestedLots.toFixed(2)}` : ''))));
 }
-function CloseTradeModal({ trade, onClose, onSave }) { var _a, _b; const [form, setForm] = useState({ tradeId: trade.id, exit: (_b = (_a = trade.exit) !== null && _a !== void 0 ? _a : trade.tp) !== null && _b !== void 0 ? _b : trade.entry, closeDate: isoNow(), exitMethod: 'Manual', fees: '0', review: '' }); const set = (k, v) => setForm({ ...form, [k]: v }); function method(m) { const exit = m === 'TP' ? trade.tp : m === 'SL' ? trade.sl : m === 'BE' ? trade.entry : form.exit; setForm({ ...form, exit: exit !== null && exit !== void 0 ? exit : '', exitMethod: m }); } return React.createElement("div", { className: "modal-backdrop" },
+function CloseTradeModal({ trade, onClose, onSave }) { var _a; const [form, setForm] = useState({ tradeId: trade.id, exit: (trade.tp !== null && trade.tp !== undefined && trade.tp !== '') ? trade.tp : ((_a = trade.exit) !== null && _a !== void 0 ? _a : trade.entry), closeDate: isoNow(), exitMethod: (trade.tp !== null && trade.tp !== undefined && trade.tp !== '') ? 'TP' : 'Manual', fees: '0', review: '' }); const set = (k, v) => setForm({ ...form, [k]: v }); function method(m) { const exit = m === 'TP' ? trade.tp : m === 'SL' ? trade.sl : m === 'BE' ? trade.entry : form.exit; setForm({ ...form, exit: exit !== null && exit !== void 0 ? exit : '', exitMethod: m }); } return React.createElement("div", { className: "modal-backdrop" },
     React.createElement("div", { className: "modal compact-modal" },
         React.createElement("div", { className: "modal-head" },
             React.createElement("div", null,

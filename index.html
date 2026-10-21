@@ -85,6 +85,20 @@
 .dna-title{margin-top:10px}.dna-title h2{margin:0;font-size:20px}.dna-sh{display:flex;align-items:center;gap:8px;margin:0}.dna-sh svg{color:#9b82ff}
 .dna-ihead .dna-meta{margin:0 0 0 auto;text-align:right;font-size:10.5px}.dna-item>p:first-of-type{margin-top:8px}
 @media(min-width:640px){.dna-top{grid-template-columns:1fr 1fr;align-items:center}}
+
+.tsel,.dfield{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;margin-top:6px;background:#0c1322;border:1px solid #26334e;color:#edf2ff;border-radius:10px;padding:11px 12px;font:inherit;font-size:13px;text-align:left;cursor:pointer}
+.tsel svg,.dfield svg{color:#7d8bab;flex:none}.period-controls>.tsel{margin-top:0}.modal-backdrop.top{z-index:80}
+.tsel-sheet,.dp-sheet{width:min(360px,100%);max-height:84vh;overflow:auto;background:#10182a;border:1px solid #293757;border-radius:20px;box-shadow:0 24px 70px #000d}
+.tsel-sheet{padding:8px 0}.tsel-title{padding:12px 20px 8px;font:500 11px 'DM Mono',monospace;letter-spacing:.08em;color:#7d8bab;text-transform:uppercase}
+.tsel-sheet>button{width:100%;display:flex;justify-content:space-between;align-items:center;background:none;border:0;color:#dfe6fb;font-size:15px;padding:15px 20px}.tsel-sheet>button.on{background:#162144;color:#fff}
+.tsel-sheet>button i{width:18px;height:18px;border-radius:50%;border:2px solid #4b5b82;flex:none}.tsel-sheet>button.on i{border-color:#6b8dff;background:radial-gradient(#6b8dff 45%,transparent 50%)}
+.dp-sheet{padding:18px}.dp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.dp-head strong{font-size:14px}
+.dp-week,.dp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center}.dp-week span{font-size:11px;color:#7d8bab;padding:4px 0}
+.dp-grid button{background:none;border:0;color:#dfe6fb;height:38px;border-radius:50%;font-size:14px}.dp-grid button.on{background:#5d83ff;color:#fff;font-weight:700}.dp-grid button:disabled{opacity:.25}
+.dp-time{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:12px;border-top:1px solid #202b43;padding-top:12px}.dp-time b{color:#7d8bab}
+.dp-col{position:relative;height:120px;overflow-y:auto;width:76px;background:#0b1222;border-radius:12px;padding:4px 0}.dp-col button{display:block;width:100%;background:none;border:0;color:#8a94ab;height:36px;font:500 15px 'DM Mono',monospace}.dp-col button.on{color:#fff;background:#1d2c57;border-radius:8px}
+.dp-actions{display:flex;justify-content:flex-end;gap:22px;margin-top:14px}.dp-actions button{background:none;border:0;color:#7da2ff;font-size:14px;font-weight:700;padding:8px}
+.range-dialog{background:#10182a!important;border:1px solid #293757;color:#eef2ff}.range-dialog label{color:#9aa7c5}.range-actions button{color:#8aa8ff!important}.range-actions button.ok{background:linear-gradient(135deg,#6185ff,#4564e8);color:#fff!important;border-radius:10px;padding:9px 16px}
 </style>
 </head>
 <body>
@@ -349,6 +363,61 @@ function Metric({ label, value, icon, accent, sub, tone }) { return React.create
     React.createElement("span", null, label),
     React.createElement("strong", { className: tone ? `val-${tone}` : '' }, value),
     sub && React.createElement("small", { className: String(sub).trim().startsWith('-') ? 'sub-neg' : String(sub).trim().startsWith('+') ? 'sub-pos' : '' }, sub)); }
+function TSelect({ value, onChange, options, title }) {
+    const [open, setOpen] = useState(false);
+    const opts = options.map(o => typeof o === 'string' ? { v: o, l: o } : o);
+    const cur = opts.find(o => o.v === value) || opts[0];
+    return React.createElement(React.Fragment, null,
+        React.createElement("button", { type: "button", className: "tsel", onClick: () => setOpen(true) },
+            React.createElement("span", null, cur.l),
+            React.createElement(ChevronDown, { size: 15 })),
+        open && ReactDOM.createPortal(React.createElement("div", { className: "modal-backdrop center top", onClick: e => { if (e.target === e.currentTarget)
+                setOpen(false); } },
+            React.createElement("div", { className: "tsel-sheet" },
+                React.createElement("div", { className: "tsel-title" }, title || 'Pilih'),
+                opts.map(o => React.createElement("button", { type: "button", key: o.v, className: o.v === value ? 'on' : '', onClick: () => { setOpen(false); onChange(o.v); } },
+                    React.createElement("span", null, o.l),
+                    React.createElement("i", null))))), document.body));
+}
+function DateField({ value, onChange, withTime, min }) {
+    const p2 = n => String(n).padStart(2, '0');
+    const parse = v => { const x = v ? new Date(withTime ? v : v + 'T12:00') : new Date(); return isNaN(x) ? new Date() : x; };
+    const [open, setOpen] = useState(false);
+    const [d, setD] = useState(parse(value));
+    const [cur, setCur] = useState(parse(value));
+    const show = value ? (withTime ? `${fmtLong(value.slice(0, 10))}, ${value.slice(11, 16).replace(':', '.')}` : fmtLong(value.slice(0, 10))) : 'Pilih tanggal';
+    function openIt() { const x = parse(value); setD(x); setCur(new Date(x.getFullYear(), x.getMonth(), 1)); setOpen(true); }
+    const y = cur.getFullYear(), m = cur.getMonth(), days = new Date(y, m + 1, 0).getDate(), off = (new Date(y, m, 1).getDay() + 6) % 7;
+    const sel = `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}`;
+    const done = () => { onChange(withTime ? `${sel}T${p2(d.getHours())}:${p2(d.getMinutes())}` : sel); setOpen(false); };
+    const col = (n, val, set) => Array.from({ length: n }, (_, i) => React.createElement("button", { type: "button", key: i, className: i === val ? 'on' : '', ref: i === val ? (el => { if (el && el.parentNode) {
+            el.parentNode.scrollTop = el.offsetTop - el.parentNode.clientHeight / 2 + 18;
+        } }) : null, onClick: () => set(i) }, p2(i)));
+    return React.createElement(React.Fragment, null,
+        React.createElement("button", { type: "button", className: "dfield", onClick: openIt },
+            React.createElement("span", null, show),
+            React.createElement(CalendarDays, { size: 16 })),
+        open && ReactDOM.createPortal(React.createElement("div", { className: "modal-backdrop center top", onClick: e => { if (e.target === e.currentTarget)
+                setOpen(false); } },
+            React.createElement("div", { className: "dp-sheet" },
+                React.createElement("div", { className: "dp-head" },
+                    React.createElement("button", { type: "button", className: "icon-btn", onClick: () => setCur(new Date(y, m - 1, 1)) },
+                        React.createElement(ChevronLeft, { size: 16 })),
+                    React.createElement("strong", null, cur.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })),
+                    React.createElement("button", { type: "button", className: "icon-btn", onClick: () => setCur(new Date(y, m + 1, 1)) },
+                        React.createElement(ChevronRight, { size: 16 }))),
+                React.createElement("div", { className: "dp-week" }, ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(x => React.createElement("span", { key: x }, x))),
+                React.createElement("div", { className: "dp-grid" },
+                    Array.from({ length: off }, (_, i) => React.createElement("i", { key: 'e' + i })),
+                    Array.from({ length: days }, (_, i) => { const day = i + 1, iso = `${y}-${p2(m + 1)}-${p2(day)}`; return React.createElement("button", { type: "button", key: iso, disabled: !!min && iso < min, className: iso === sel ? 'on' : '', onClick: () => setD(new Date(y, m, day, d.getHours(), d.getMinutes())) }, day); })),
+                withTime && React.createElement("div", { className: "dp-time" },
+                    React.createElement("div", { className: "dp-col" }, col(24, d.getHours(), h => setD(new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, d.getMinutes())))),
+                    React.createElement("b", null, ":"),
+                    React.createElement("div", { className: "dp-col" }, col(60, d.getMinutes(), mi => setD(new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), mi))))),
+                React.createElement("div", { className: "dp-actions" },
+                    React.createElement("button", { type: "button", onClick: () => setOpen(false) }, "Batal"),
+                    React.createElement("button", { type: "button", onClick: done }, "Setel")))), document.body));
+}
 const WIB_FMT = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jakarta', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', weekday: 'short' });
 function wib(d) { const p = {}; WIB_FMT.formatToParts(new Date(d)).forEach(x => { p[x.type] = x.value; }); return { day: `${p.year}-${p.month}-${p.day}`, month: `${p.year}-${p.month}`, year: p.year, mi: Number(p.month) - 1, hour: Number(p.hour), wd: p.weekday }; }
 const SESSIONS = [{ name: 'Asia', hrs: '06.00–15.00', test: h => h >= 6 && h < 15 }, { name: 'London', hrs: '15.00–20.00', test: h => h >= 15 && h < 20 }, { name: 'London–New York', hrs: '20.00–24.00', test: h => h >= 20 }, { name: 'New York', hrs: '00.00–04.00', test: h => h < 4 }, { name: 'Sepi', hrs: '04.00–06.00', test: h => h >= 4 && h < 6 }];
@@ -756,15 +825,10 @@ function Performance({ onSelectDate, onWallet, account, trades, period, setPerio
         React.createElement("div", { className: "section-row" },
             React.createElement("h2", null, "Equity curve"),
             React.createElement("div", { className: "period-controls" },
-                React.createElement("select", { value: period, onChange: e => { const v = e.target.value; setPeriod(v); if (v === 'Custom date range') {
+                React.createElement(TSelect, { title: "Periode", value: period, options: ['All time', 'Year-to-date', 'Weekly', 'Monthly', 'Custom date range'], onChange: v => { setPeriod(v); if (v === 'Custom date range') {
                         setDraft({ s: customStart || '', e: customEnd || '' });
                         setRangeOpen(true);
-                    } } },
-                    React.createElement("option", null, "All time"),
-                    React.createElement("option", null, "Year-to-date"),
-                    React.createElement("option", null, "Weekly"),
-                    React.createElement("option", null, "Monthly"),
-                    React.createElement("option", null, "Custom date range")))),
+                    } } }))),
         React.createElement("div", { className: "chart-card" },
             period === 'Custom date range' && customStart && customEnd && React.createElement("div", { className: "range-caption" },
                 fmtLong(customStart),
@@ -799,10 +863,10 @@ function Performance({ onSelectDate, onWallet, account, trades, period, setPerio
                 React.createElement("h3", null, "Custom Date Range"),
                 React.createElement("label", null,
                     "Start Date",
-                    React.createElement("input", { type: "date", value: draft.s, onChange: e => setDraft({ ...draft, s: e.target.value }) })),
+                    React.createElement(DateField, { value: draft.s, onChange: v => setDraft({ ...draft, s: v }) })),
                 React.createElement("label", null,
                     "End Date",
-                    React.createElement("input", { type: "date", value: draft.e, min: draft.s || undefined, onChange: e => setDraft({ ...draft, e: e.target.value }) })),
+                    React.createElement(DateField, { value: draft.e, min: draft.s || undefined, onChange: v => setDraft({ ...draft, e: v }) })),
                 React.createElement("div", { className: "range-actions" },
                     React.createElement("button", { onClick: () => { setRangeOpen(false); if (!customStart && !customEnd)
                             setPeriod('All time'); } }, "Cancel"),
@@ -826,14 +890,8 @@ function Journal({ account, trades, filters, setFilters, expanded, setExpanded, 
             React.createElement("div", { className: "search-box" },
                 React.createElement(Search, { size: 15 }),
                 React.createElement("input", { value: filters.search, onChange: e => setFilters({ ...filters, search: e.target.value }), placeholder: "Cari symbol atau setup..." })),
-            React.createElement("select", { value: filters.status, onChange: e => setFilters({ ...filters, status: e.target.value }) },
-                React.createElement("option", { value: "all" }, "All status"),
-                React.createElement("option", { value: "open" }, "Open"),
-                React.createElement("option", { value: "closed" }, "Closed")),
-            React.createElement("select", { value: filters.side, onChange: e => setFilters({ ...filters, side: e.target.value }) },
-                React.createElement("option", { value: "all" }, "Long & Short"),
-                React.createElement("option", { value: "Long" }, "Long"),
-                React.createElement("option", { value: "Short" }, "Short")),
+            React.createElement(TSelect, { title: "Status", value: filters.status, options: [{ v: 'all', l: 'All status' }, { v: 'open', l: 'Open' }, { v: 'closed', l: 'Closed' }], onChange: v => setFilters({ ...filters, status: v }) }),
+            React.createElement(TSelect, { title: "Arah", value: filters.side, options: [{ v: 'all', l: 'Long & Short' }, { v: 'Long', l: 'Long' }, { v: 'Short', l: 'Short' }], onChange: v => setFilters({ ...filters, side: v }) }),
             filters.date && React.createElement("button", { className: "filter-chip", onClick: () => setFilters({ ...filters, date: '' }) },
                 filters.date,
                 " ",
@@ -948,7 +1006,7 @@ function Tools({ account, trades, onAdd, onExport, onBackup, onRestore, onNewAcc
         React.createElement("div", { className: "calc-grid compact-calc" },
             React.createElement("label", null,
                 "Symbol",
-                React.createElement("select", { value: calc.symbol, onChange: e => setCalc({ ...calc, symbol: e.target.value }) }, SYMBOLS.map(s => React.createElement("option", { key: s }, s)))),
+                React.createElement(TSelect, { title: "Symbol", value: calc.symbol, options: SYMBOLS, onChange: v => setCalc({ ...calc, symbol: v }) })),
             React.createElement("label", null,
                 "Entry",
                 React.createElement("input", { inputMode: "decimal", value: calc.entry, onChange: e => setCalc({ ...calc, entry: e.target.value }), placeholder: "4158" })),
@@ -1050,10 +1108,10 @@ function AddTradeModal({ account, onClose, onSave, initial }) {
                 React.createElement("div", { className: "form-grid" },
                     React.createElement("label", null,
                         "Symbol",
-                        React.createElement("select", { value: form.symbol, onChange: e => set('symbol', e.target.value) }, SYMBOLS.map(s => React.createElement("option", { key: s }, s)))),
+                        React.createElement(TSelect, { title: "Symbol", value: form.symbol, options: SYMBOLS, onChange: v => set('symbol', v) })),
                     React.createElement("label", null,
                         "Tanggal & waktu",
-                        React.createElement("input", { type: "datetime-local", value: form.date, onChange: e => set('date', e.target.value) }))),
+                        React.createElement(DateField, { withTime: true, value: form.date, onChange: v => set('date', v) }))),
                 React.createElement("label", null,
                     "Trade setup / alasan entry",
                     React.createElement("textarea", { value: form.setup, onChange: e => set('setup', e.target.value), placeholder: "Contoh: breakout + retest di resistance H1..." })),
@@ -1137,7 +1195,7 @@ function CloseTradeModal({ trade, onClose, onSave }) { var _a; const [form, setF
             React.createElement("input", { inputMode: "decimal", value: form.exit, onChange: e => set('exit', e.target.value) })),
         React.createElement("label", null,
             "Tanggal close",
-            React.createElement("input", { type: "datetime-local", value: form.closeDate, onChange: e => set('closeDate', e.target.value) })),
+            React.createElement(DateField, { withTime: true, value: form.closeDate, onChange: v => set('closeDate', v) })),
         React.createElement("label", null,
             "Fees / commission",
             React.createElement("input", { type: "number", step: "0.01", value: form.fees, onChange: e => set('fees', e.target.value) })),
@@ -1237,10 +1295,10 @@ function AccountModal({ initialMode = 'manage', accounts, activeAccount, onClose
                         React.createElement("input", { type: "number", min: "0.01", step: "0.01", value: capital.amount, onChange: e => setCapitalField('amount', e.target.value), placeholder: "1000", required: true })),
                     React.createElement("label", null,
                         "Tanggal",
-                        React.createElement("input", { type: "date", value: capital.date, onChange: e => setCapitalField('date', e.target.value), required: true }))),
+                        React.createElement(DateField, { value: capital.date, onChange: v => setCapitalField('date', v), required: true }))),
                 React.createElement("label", null,
                     "Catatan (opsional)",
-                    React.createElement("input", { value: capital.note, onChange: e => setCapitalField('note', e.target.value), placeholder: "Contoh: tambah modal / tarik profit" })),
+                    React.createElement("input", { value: capital.note, onChange: e => setCapitalField('note', v), placeholder: "Contoh: tambah modal / tarik profit" })),
                 React.createElement("button", { className: "primary-btn", type: "submit" },
                     capital.type === 'deposit' ? React.createElement(Plus, { size: 16 }) : React.createElement(ArrowDownRight, { size: 16 }),
                     " Simpan ",
@@ -1262,14 +1320,10 @@ function AccountModal({ initialMode = 'manage', accounts, activeAccount, onClose
             React.createElement("div", { className: "form-grid three" },
                 React.createElement("label", null,
                     "First deposit",
-                    React.createElement("input", { type: "date", value: form.firstDeposit, onChange: e => set('firstDeposit', e.target.value) })),
+                    React.createElement(DateField, { value: form.firstDeposit, onChange: v => set('firstDeposit', v) })),
                 React.createElement("label", null,
                     "Currency",
-                    React.createElement("select", { value: form.currency, onChange: e => set('currency', e.target.value) },
-                        React.createElement("option", null, "USD"),
-                        React.createElement("option", null, "EUR"),
-                        React.createElement("option", null, "IDR"),
-                        React.createElement("option", null, "GBP"))),
+                    React.createElement(TSelect, { title: "Mata uang", value: form.currency, options: ['USD', 'EUR', 'IDR', 'GBP'], onChange: v => set('currency', v) })),
                 React.createElement("label", null,
                     "Opening balance",
                     React.createElement("input", { type: "number", value: form.balance, onChange: e => set('balance', e.target.value), placeholder: "10000" }))),

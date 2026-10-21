@@ -55,6 +55,23 @@
 .modal-backdrop.center .modal{border-radius:20px;max-height:88vh;overflow-y:auto;width:min(480px,100%);margin:0}
 
 .metric strong.val-pos,.metric strong .val-pos{color:#34d399}.metric strong.val-neg,.metric strong .val-neg{color:#ff6b81}.metric small.sub-pos{color:#34d399}.metric small.sub-neg{color:#ff6b81}
+
+.metric strong.val-pos,.metric small.sub-pos{color:#34d399}.metric strong.val-neg,.metric small.sub-neg{color:#ff6b81}
+.trade-actions{display:flex;gap:18px;align-items:center;margin-top:10px}.edit-btn{background:none;border:0;color:#7da2ff;font-size:13px;font-weight:600;padding:6px 0}
+.pe{display:flex;flex-direction:column;gap:14px;margin-top:6px}.pe .pos,.pe-sum .pos,.pe-chips .pos b{color:#34d399}.pe .neg{color:#ff6b81}
+.pe-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}.pe-tile{background:#10182b;border:1px solid #202d47;border-radius:14px;padding:14px}.pe-tile span{display:block;font:500 10px 'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#7d8bab;margin-bottom:8px}.pe-tile b{font-size:19px;font-weight:800;color:#eef2ff}
+.pe-card{background:#10182b;border:1px solid #202d47;border-radius:18px;padding:16px}.pe-card h3{margin:0 0 12px;font-size:15px}.pe-card h3 small{font-weight:400;color:#7d8bab;font-size:11px}
+.pe-tabs,.pe-years{display:flex;gap:6px;flex-wrap:wrap}.pe-tabs button,.pe-years button{background:#0b1222;border:1px solid #202d47;color:#8a94ab;border-radius:10px;padding:7px 11px;font-size:12px}.pe-tabs button.on,.pe-years button.on{background:#1d2c57;color:#fff;border-color:#4a68c8}
+.pe-sub{color:#8a94ab;font-size:11px;margin:12px 0 4px}.pe-svg{width:100%;height:auto;display:block}.pe-empty{color:#7d8bab;font-size:13px;padding:18px 0;text-align:center}
+.pe-cap{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:#aab6cf;margin-top:10px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}.dot.g{background:#34d399}.dot.r{background:#ff6b81}
+.pe-link{background:none;border:0;color:#cfd8f3;font-size:12px;font-weight:700;margin-top:8px;padding:4px 0}.pe-chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.pe-chips>div{display:flex;justify-content:space-between;border-radius:10px;padding:9px 10px;font-size:12px}.pe-chips>div.pos{background:#10342b}.pe-chips>div.neg{background:#3a1d29}.pe-chips .neg b{color:#ff8da0}
+.pe-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}.pe-head h3{margin:0}
+.pe-months{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;align-items:end;height:92px}.pe-months button{background:none;border:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;padding:0;height:100%;border-radius:8px}.pe-months button.sel{background:#162144}.pe-months i{display:block;width:70%;border-radius:4px}.pe-months small{font-size:8.5px;color:#7d8bab}
+.pe-sum{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.pe-sum>div{background:#0b1222;border-radius:12px;padding:10px}.pe-sum span{display:block;font-size:10px;color:#7d8bab;margin-bottom:5px}.pe-sum b{font-size:16px}
+.pe-best{background:#10342b;border:1px solid #2f8f6f;border-radius:12px;padding:11px 12px;font-size:13px;margin-bottom:12px;line-height:1.5}
+.pe-row{margin-bottom:12px}.pe-row.best .pe-bar{box-shadow:0 0 0 1px #2f8f6f}.pe-rowhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;font-size:13px}.pe-rowhead small{display:block;color:#7d8bab;font-size:10px;margin-top:2px}.pe-meta{display:flex;gap:10px;align-items:center;font-size:11px;color:#8a94ab}.pe-meta b{font-size:13px}
+.pe-bar{height:8px;border-radius:6px;background:#0b1222;overflow:hidden}.pe-bar i{display:block;height:100%;border-radius:6px}.pe-note{font-size:10.5px;color:#7d8bab;line-height:1.5;margin:6px 0 0}
+.pe-donutwrap{display:flex;align-items:center;gap:20px}.pe-donut{width:140px;height:140px;flex:none}.pe-donutwrap p{margin:8px 0;font-size:14px;display:flex;align-items:center}.pe-donutwrap b{margin-left:10px}
 </style>
 </head>
 <body>
@@ -65,7 +82,7 @@
 window.addEventListener("error",function(e){var b=document.getElementById("boot");if(b)b.textContent="Error: "+e.message;});
 "use strict";
 const { useEffect, useMemo, useRef, useState } = React;
-const APP_VERSION = '1.0.0';
+const APP_VERSION = '1.1.0';
 const ICONS = { "Activity": [["polyline", { "points": "22 12 18 12 15 21 9 3 6 12 2 12" }]], "ArrowDownRight": [["path", { "d": "M7 7l10 10" }], ["path", { "d": "M17 7v10H7" }]], "ArrowUpRight": [["path", { "d": "M7 17L17 7" }], ["path", { "d": "M7 7h10v10" }]], "BarChart3": [["path", { "d": "M3 3v18h18" }], ["path", { "d": "M18 17V9" }], ["path", { "d": "M13 17V5" }], ["path", { "d": "M8 17v-3" }]], "BookOpen": [["path", { "d": "M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" }], ["path", { "d": "M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" }]], "CalendarDays": [["rect", { "x": 3, "y": 4, "width": 18, "height": 18, "rx": 2 }], ["path", { "d": "M16 2v4" }], ["path", { "d": "M8 2v4" }], ["path", { "d": "M3 10h18" }], ["path", { "d": "M8 14h.01" }], ["path", { "d": "M12 14h.01" }], ["path", { "d": "M16 14h.01" }], ["path", { "d": "M8 18h.01" }], ["path", { "d": "M12 18h.01" }], ["path", { "d": "M16 18h.01" }]], "Camera": [["path", { "d": "M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z" }], ["circle", { "cx": 12, "cy": 13, "r": 3 }]], "ChevronDown": [["path", { "d": "M6 9l6 6 6-6" }]], "ChevronLeft": [["path", { "d": "M15 18l-6-6 6-6" }]], "ChevronRight": [["path", { "d": "M9 18l6-6-6-6" }]], "CircleHelp": [["circle", { "cx": 12, "cy": 12, "r": 10 }], ["path", { "d": "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" }], ["path", { "d": "M12 17h.01" }]], "ClipboardPaste": [["path", { "d": "M15 2H9a1 1 0 0 0-1 1v2c0 .6.4 1 1 1h6c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1z" }], ["path", { "d": "M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2" }]], "Cloud": [["path", { "d": "M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z" }]], "Download": [["path", { "d": "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" }], ["path", { "d": "M7 10l5 5 5-5" }], ["path", { "d": "M12 15V3" }]], "FileJson": [["path", { "d": "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" }], ["path", { "d": "M14 2v6h6" }], ["path", { "d": "M10 12a1 1 0 0 0-1 1v1a1 1 0 0 1-1 1 1 1 0 0 1 1 1v1a1 1 0 0 0 1 1" }], ["path", { "d": "M14 18a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1 1 1 0 0 1-1-1v-1a1 1 0 0 0-1-1" }]], "Filter": [["path", { "d": "M22 3H2l8 9.46V19l4 2v-8.54z" }]], "LineChart": [["path", { "d": "M3 3v18h18" }], ["path", { "d": "M19 9l-5 5-4-4-3 3" }]], "Plus": [["path", { "d": "M5 12h14" }], ["path", { "d": "M12 5v14" }]], "Search": [["circle", { "cx": 11, "cy": 11, "r": 8 }], ["path", { "d": "M21 21l-4.3-4.3" }]], "Settings2": [["path", { "d": "M20 7h-9" }], ["path", { "d": "M14 17H5" }], ["circle", { "cx": 17, "cy": 17, "r": 3 }], ["circle", { "cx": 7, "cy": 7, "r": 3 }]], "Share2": [["circle", { "cx": 18, "cy": 5, "r": 3 }], ["circle", { "cx": 6, "cy": 12, "r": 3 }], ["circle", { "cx": 18, "cy": 19, "r": 3 }], ["path", { "d": "M8.59 13.51l6.83 3.98" }], ["path", { "d": "M15.41 6.51l-6.82 3.98" }]], "SlidersHorizontal": [["path", { "d": "M21 4h-7" }], ["path", { "d": "M10 4H3" }], ["path", { "d": "M21 12h-9" }], ["path", { "d": "M8 12H3" }], ["path", { "d": "M21 20h-5" }], ["path", { "d": "M12 20H3" }], ["path", { "d": "M14 2v4" }], ["path", { "d": "M8 10v4" }], ["path", { "d": "M16 18v4" }]], "Target": [["circle", { "cx": 12, "cy": 12, "r": 10 }], ["circle", { "cx": 12, "cy": 12, "r": 6 }], ["circle", { "cx": 12, "cy": 12, "r": 2 }]], "Trash2": [["path", { "d": "M3 6h18" }], ["path", { "d": "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" }], ["path", { "d": "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" }], ["path", { "d": "M10 11v6" }], ["path", { "d": "M14 11v6" }]], "TrendingDown": [["path", { "d": "M22 17l-8.5-8.5-5 5L2 7" }], ["path", { "d": "M16 17h6v-6" }]], "TrendingUp": [["path", { "d": "M22 7l-8.5 8.5-5-5L2 17" }], ["path", { "d": "M16 7h6v6" }]], "Upload": [["path", { "d": "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" }], ["path", { "d": "M17 8l-5-5-5 5" }], ["path", { "d": "M12 3v12" }]], "UserRound": [["circle", { "cx": 12, "cy": 8, "r": 5 }], ["path", { "d": "M20 21a8 8 0 0 0-16 0" }]], "Wallet": [["path", { "d": "M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" }], ["path", { "d": "M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" }]], "X": [["path", { "d": "M18 6L6 18" }], ["path", { "d": "M6 6l12 12" }]], "Zap": [["path", { "d": "M13 2L3 14h9l-1 8 10-12h-9l1-8z" }]] };
 function Icon({ name, size = 24, strokeWidth = 2, className, style }) {
     const node = ICONS[name] || [];
@@ -227,8 +244,10 @@ function App() {
     const [accountMode, setAccountMode] = useState('manage');
     const [showAdd, setShowAdd] = useState(false);
     const [closingTrade, setClosingTrade] = useState(null);
+    const [editingTrade, setEditingTrade] = useState(null);
     const [expanded, setExpanded] = useState(null);
     const [journalFilters, setJournalFilters] = useState({ search: '', status: 'all', side: 'all', date: '' });
+    useEffect(() => { setExpanded(null); }, [tab]);
     const activeAccount = accounts.find(a => a.id === activeAccountId) || accounts[0];
     const trades = (activeAccount === null || activeAccount === void 0 ? void 0 : activeAccount.trades) || [];
     function persist(nextAccounts = accounts, nextActive = activeAccountId) { setAccounts(nextAccounts); setActiveAccountId(nextActive); saveStore(nextActive, nextAccounts); }
@@ -245,6 +264,8 @@ function App() {
     function addTrade(data) { const trade = { ...data, id: uid('trade'), entry: Number(data.entry), exit: data.exit ? Number(data.exit) : null, lots: Number(data.lots) || 0, sl: data.sl ? Number(data.sl) : null, tp: data.tp ? Number(data.tp) : null, fees: Number(data.fees) || 0, status: data.exit ? 'closed' : 'open', pnl: data.exit ? pnlFor(data, data.exit) : 0, review: data.review || '', screenshots: data.screenshots || [] }; persistTrades([trade, ...trades]); setShowAdd(false); setTab('journal'); }
     function closeTrade(data) { const trade = trades.find(t => t.id === data.tradeId); if (!trade)
         return; const updated = { ...trade, exit: Number(data.exit), closeDate: data.closeDate, fees: Number(data.fees) || 0, exitMethod: data.exitMethod, status: 'closed', pnl: pnlFor({ ...trade, fees: Number(data.fees) || 0 }, Number(data.exit)), review: data.review || '' }; persistTrades(trades.map(t => t.id === trade.id ? updated : t)); setClosingTrade(null); setExpanded(trade.id); }
+    function updateTrade(data) { const old = trades.find(t => t.id === data.id); if (!old)
+        return; const closed = !!data.exit; const fees = Number(data.fees) || 0; const trade = { ...old, ...data, entry: Number(data.entry), exit: closed ? Number(data.exit) : null, lots: Number(data.lots) || 0, sl: data.sl ? Number(data.sl) : null, tp: data.tp ? Number(data.tp) : null, fees, status: closed ? 'closed' : 'open', pnl: closed ? pnlFor({ ...data, fees }, data.exit) : 0, closeDate: closed ? (old.closeDate || data.date) : undefined }; persistTrades(trades.map(t => t.id === data.id ? trade : t)); setEditingTrade(null); notify('Trade diperbarui.'); }
     function deleteTrade(id) { persistTrades(trades.filter(t => t.id !== id)); setExpanded(null); }
     function exportCsv() { const header = 'Tanggal Entry,Tanggal Close,Symbol,Arah,Status,Entry,Exit,Lots,SL,TP,Exit Method,PnL,Fees,Setup,Review\n'; const body = trades.map(t => { var _a, _b, _c; return [t.date, t.closeDate || '', t.symbol, t.side, t.status, t.entry, (_a = t.exit) !== null && _a !== void 0 ? _a : '', t.lots, (_b = t.sl) !== null && _b !== void 0 ? _b : '', (_c = t.tp) !== null && _c !== void 0 ? _c : '', t.exitMethod || '', t.pnl, t.fees || 0, `"${String(t.setup || '').replaceAll('"', '""')}"`, `"${String(t.review || '').replaceAll('"', '""')}"`].join(','); }).join('\n'); saveFile(`edge-journal-${activeAccount.name.toLowerCase().replaceAll(' ', '-')}.csv`, header + body, 'text/csv'); }
     function backupJson() { const stamp = new Date().toISOString().slice(0, 10); saveFile(`edge-journal-backup-${stamp}.json`, JSON.stringify({ version: 3, appVersion: APP_VERSION, exportedAt: new Date().toISOString(), activeAccountId, accounts }, null, 2), 'application/json'); }
@@ -289,13 +310,14 @@ function App() {
                     React.createElement("small", null, money(activeAccount.balance, activeAccount.currency)))),
             React.createElement("main", { className: "main-content" },
                 tab === 'performance' && React.createElement(Performance, { onWallet: () => { setAccountMode('capital'); setShowAccount(true); }, account: activeAccount, trades: trades, period: period, setPeriod: setPeriod, customStart: customStart, customEnd: customEnd, setCustomStart: setCustomStart, setCustomEnd: setCustomEnd }),
-                tab === 'journal' && React.createElement(Journal, { account: activeAccount, trades: trades, filters: journalFilters, setFilters: setJournalFilters, expanded: expanded, setExpanded: setExpanded, onAdd: () => setShowAdd(true), onDelete: deleteTrade, onClose: setClosingTrade }),
+                tab === 'journal' && React.createElement(Journal, { account: activeAccount, trades: trades, filters: journalFilters, setFilters: setJournalFilters, expanded: expanded, setExpanded: setExpanded, onAdd: () => setShowAdd(true), onDelete: deleteTrade, onClose: setClosingTrade, onEdit: setEditingTrade }),
                 tab === 'tools' && React.createElement(Tools, { account: activeAccount, trades: trades, onAdd: () => setShowAdd(true), onExport: exportCsv, onBackup: backupJson, onRestore: restoreJson, onNewAccount: () => setShowAccount(true) }))),
         React.createElement("nav", { className: "bottom-nav" },
             React.createElement(NavItem, { active: tab === 'tools', onClick: () => setTab('tools'), icon: React.createElement(SlidersHorizontal, null), label: "Tools" }),
             React.createElement(NavItem, { active: tab === 'journal', onClick: () => setTab('journal'), icon: React.createElement(BookOpen, null), label: "My Journal" }),
             React.createElement(NavItem, { active: tab === 'performance', onClick: () => setTab('performance'), icon: React.createElement(BarChart3, null), label: "Performance" })),
         showAdd && React.createElement(AddTradeModal, { account: activeAccount, onClose: () => setShowAdd(false), onSave: addTrade }),
+        editingTrade && React.createElement(AddTradeModal, { initial: editingTrade, account: activeAccount, onClose: () => setEditingTrade(null), onSave: updateTrade }),
         closingTrade && React.createElement(CloseTradeModal, { trade: closingTrade, onClose: () => setClosingTrade(null), onSave: closeTrade }),
         showAccount && React.createElement(AccountModal, { initialMode: accountMode, accounts: accounts, activeAccount: activeAccount, onClose: () => { setShowAccount(false); setAccountMode('manage'); }, onSelect: selectAccount, onCreate: addAccount, onDelete: deleteAccount, onUpdate: updateAccount, onCapital: recordCapital, onBackup: backupJson, onRestore: restoreJson, onExport: exportCsv }),
         showCalendar && React.createElement(CalendarModal, { trades: trades, onClose: () => setShowCalendar(false), onSelectDate: chooseCalendarDate }));
@@ -309,11 +331,248 @@ function PageHeading({ eyebrow, title, description, action }) { return React.cre
         React.createElement("h1", null, title),
         React.createElement("p", { className: "muted" }, description)),
     action); }
-function Metric({ label, value, icon, accent, sub, tone }) { const n = parseFloat(String(sub || '').replace('+', '')); const st = Number.isFinite(n) && n !== 0 ? (n > 0 ? 'sub-pos' : 'sub-neg') : ''; return React.createElement("div", { className: "metric" },
+function Metric({ label, value, icon, accent, sub, tone }) { return React.createElement("div", { className: "metric" },
     React.createElement("div", { className: `metric-icon ${accent}` }, icon),
     React.createElement("span", null, label),
-    React.createElement("strong", { className: tone === 'pos' ? 'val-pos' : tone === 'neg' ? 'val-neg' : '' }, value),
-    sub && React.createElement("small", { className: st }, sub)); }
+    React.createElement("strong", { className: tone ? `val-${tone}` : '' }, value),
+    sub && React.createElement("small", { className: String(sub).trim().startsWith('-') ? 'sub-neg' : String(sub).trim().startsWith('+') ? 'sub-pos' : '' }, sub)); }
+const WIB_FMT = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jakarta', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', weekday: 'short' });
+function wib(d) { const p = {}; WIB_FMT.formatToParts(new Date(d)).forEach(x => { p[x.type] = x.value; }); return { day: `${p.year}-${p.month}-${p.day}`, month: `${p.year}-${p.month}`, year: p.year, mi: Number(p.month) - 1, hour: Number(p.hour), wd: p.weekday }; }
+const SESSIONS = [{ name: 'Asia', hrs: '06.00–15.00', test: h => h >= 6 && h < 15 }, { name: 'London', hrs: '15.00–20.00', test: h => h >= 15 && h < 20 }, { name: 'London–New York', hrs: '20.00–24.00', test: h => h >= 20 }, { name: 'New York', hrs: '00.00–04.00', test: h => h < 4 }, { name: 'Sepi', hrs: '04.00–06.00', test: h => h >= 4 && h < 6 }];
+const sumOf = (a, f) => a.reduce((x, t) => x + (Number(f(t)) || 0), 0);
+const tone = n => n > 0 ? 'pos' : n < 0 ? 'neg' : '';
+function MiniChart({ vals, labels, kind, fmt }) {
+    if (!vals.length)
+        return React.createElement("div", { className: "pe-empty" }, "Belum ada data untuk grafik ini.");
+    const W = 500, H = 230, L = 58, R = 12, T = 14, B = 30;
+    const lo = Math.min(0, ...vals), hi = Math.max(0, ...vals);
+    const span = (hi - lo) || 1;
+    const y = v => T + (hi - v) / span * (H - T - B);
+    const n = vals.length;
+    const x = i => kind === 'bar' ? L + (i + .5) * ((W - L - R) / n) : (n === 1 ? (L + W - R) / 2 : L + i * ((W - L - R) / (n - 1)));
+    const grid = [0, 1, 2, 3].map(i => lo + span * i / 3);
+    const col = vals[n - 1] >= 0 ? '#34d399' : '#ff6b81';
+    const line = vals.map((v, i) => `${x(i)},${y(v)}`).join(' ');
+    const bw = Math.min(28, (W - L - R) / n * .7);
+    return React.createElement("svg", { viewBox: `0 0 ${W} ${H}`, className: "pe-svg" },
+        grid.map((g, i) => React.createElement("g", { key: i },
+            React.createElement("line", { x1: L, x2: W - R, y1: y(g), y2: y(g), stroke: "#233252", strokeWidth: "1" }),
+            React.createElement("text", { x: L - 6, y: y(g) + 4, textAnchor: "end", fontSize: "11", fill: "#7d8bab" }, fmt(g)))),
+        React.createElement("line", { x1: L, x2: W - R, y1: y(0), y2: y(0), stroke: "#3a4d78", strokeWidth: "1.5" }),
+        kind === 'bar' ? vals.map((v, i) => React.createElement("rect", { key: i, x: x(i) - bw / 2, y: Math.min(y(v), y(0)), width: bw, height: Math.max(2, Math.abs(y(v) - y(0))), rx: "3", fill: v >= 0 ? '#34d399' : '#ff6b81' })) : React.createElement(React.Fragment, null,
+            n > 1 && React.createElement("polygon", { points: `${x(0)},${y(0)} ${line} ${x(n - 1)},${y(0)}`, fill: col, opacity: ".14" }),
+            React.createElement("polyline", { points: line, fill: "none", stroke: col, strokeWidth: "3", strokeLinejoin: "round", strokeLinecap: "round" }),
+            React.createElement("circle", { cx: x(n - 1), cy: y(vals[n - 1]), r: "5", fill: col })),
+        [0, Math.floor((n - 1) / 2), n - 1].filter((v, i, a) => a.indexOf(v) === i).map(i => React.createElement("text", { key: i, x: x(i), y: H - 8, textAnchor: "middle", fontSize: "11", fill: "#7d8bab" }, labels[i])));
+}
+function Donut({ wins, losses }) {
+    const tot = wins + losses;
+    const r = 52, c = 2 * Math.PI * r;
+    const wr = tot ? wins / tot * 100 : 0;
+    return React.createElement("svg", { viewBox: "0 0 140 140", className: "pe-donut" },
+        React.createElement("circle", { cx: "70", cy: "70", r: r, fill: "none", stroke: tot ? '#ff6b81' : '#233252', strokeWidth: "16" }),
+        tot > 0 && React.createElement("circle", { cx: "70", cy: "70", r: r, fill: "none", stroke: "#34d399", strokeWidth: "16", strokeDasharray: `${c * wins / tot} ${c}`, transform: "rotate(-90 70 70)" }),
+        React.createElement("text", { x: "70", y: "76", textAnchor: "middle", fontSize: "22", fontWeight: "800", fill: wr >= 50 ? '#34d399' : tot ? '#ff6b81' : '#9aa7c5' },
+            tot ? wr.toFixed(1) : '0',
+            "%"));
+}
+function PerfExtra({ account, trades, filtered, total, maxDd }) {
+    const cur = account.currency;
+    const fm = n => money(n, cur);
+    const sg = n => `${n > 0 ? '+' : ''}${fm(n)}`;
+    const [ct, setCt] = useState('growth');
+    const [showDet, setShowDet] = useState(false);
+    const nowW = wib(new Date());
+    const [year, setYear] = useState(nowW.year);
+    const [mSel, setMSel] = useState(nowW.mi);
+    const hist = account.capitalHistory || [];
+    const dep = hist.filter(h => h.type !== 'withdraw'), wdr = hist.filter(h => h.type === 'withdraw');
+    const depSum = sumOf(dep, h => h.amount), wdSum = sumOf(wdr, h => h.amount);
+    const start = Math.max((account.balance || 0) - depSum + wdSum, 1);
+    const sorted = filtered.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+    const wins = sorted.filter(t => t.pnl > 0), losses = sorted.filter(t => t.pnl < 0);
+    const gW = sumOf(wins, t => t.pnl), gL = Math.abs(sumOf(losses, t => t.pnl));
+    const pf = gL ? gW / gL : (gW ? Infinity : 0);
+    const dayMap = {};
+    sorted.forEach(t => { const k = wib(t.date).day; dayMap[k] = (dayMap[k] || 0) + (Number(t.pnl) || 0); });
+    const dayKeys = Object.keys(dayMap).sort();
+    const monthProfit = sumOf(sorted.filter(t => wib(t.date).month === nowW.month), t => t.pnl);
+    const rrs = filtered.map(t => { const r = riskFor(t.entry, t.sl, t.lots, t.symbol), w = rewardFor(t.entry, t.tp, t.lots, t.symbol); return r && w ? w / r : null; }).filter(Boolean);
+    const avgRR = rrs.length ? rrs.reduce((a, b) => a + b, 0) / rrs.length : null;
+    const pcs = (v, b) => `${v > 0 ? '+' : ''}${(v / (b || 1) * 100).toFixed(2)}%`;
+    const tiles = [['Gain', pcs(total, start), tone(total)], ['Abs. gain', pcs(total, start + depSum), tone(total)], ['Daily (rata-rata)', pcs(dayKeys.length ? total / dayKeys.length : 0, account.balance), tone(total)], ['Monthly (bulan ini)', pcs(monthProfit, account.balance), tone(monthProfit)], ['Drawdown', `${maxDd ? '-' : ''}${(maxDd / (account.balance || 1) * 100).toFixed(2)}%`, maxDd ? 'neg' : ''], ['Win rate', `${sorted.length ? (wins.length / sorted.length * 100).toFixed(0) : 0}%`, sorted.length ? (wins.length / sorted.length >= .5 ? 'pos' : 'neg') : ''], ['Profit factor', pf === Infinity ? '∞' : pf.toFixed(2), pf >= 1 ? 'pos' : pf > 0 ? 'neg' : ''], ['Avg R:R', avgRR ? avgRR.toFixed(1) : '—', ''], ['Trades', String(sorted.length), ''], ['Profit', sg(total), tone(total)], ['Balance', fm(account.balance), ''], ['Equity', fm(account.balance + total), tone(total)], ['Deposits', fm(depSum), 'pos'], ['Withdrawals', fm(wdSum), wdSum ? 'neg' : '']];
+    let cum = 0, peak = 0;
+    const cumS = [], ddS = [];
+    dayKeys.forEach(k => { cum += dayMap[k]; peak = Math.max(peak, cum); cumS.push(cum); ddS.push(cum - peak); });
+    const lab = dayKeys.map(k => `${k.slice(8)}/${k.slice(5, 7)}`);
+    const CT = { growth: { v: cumS.map(c => c / start * 100), k: 'line', f: v => `${v > 0 ? '+' : ''}${v.toFixed(1)}%`, t: 'Growth (% dari modal awal)' }, balance: { v: cumS.map(c => account.balance + c), k: 'line', f: v => `$${Math.round(v)}`, t: 'Balance / equity' }, profit: { v: cumS, k: 'line', f: v => `$${Math.round(v)}`, t: 'Profit kumulatif' }, daily: { v: dayKeys.map(k => dayMap[k]), k: 'bar', f: v => `$${Math.round(v)}`, t: 'P&L harian (WIB)' }, dd: { v: ddS, k: 'line', f: v => `$${Math.round(v)}`, t: 'Drawdown dari puncak' } }[ct];
+    const allClosed = trades.filter(t => t.status === 'closed');
+    const years = [...new Set([...allClosed.map(t => wib(t.date).year), nowW.year])].sort();
+    const mon = Array.from({ length: 12 }, (_, i) => { const xs = allClosed.filter(t => { const w = wib(t.date); return w.year === year && w.mi === i; }); return { i, count: xs.length, pnl: sumOf(xs, t => t.pnl), wins: xs.filter(t => t.pnl > 0).length }; });
+    const MN = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const ms = mon[mSel];
+    const syms = [...new Set(sorted.map(t => t.symbol))].map(s => { const xs = sorted.filter(t => t.symbol === s); return { s, n: xs.length, pnl: sumOf(xs, t => t.pnl) }; }).sort((a, b) => b.n - a.n);
+    const maxSym = Math.max(1, ...syms.map(x => Math.abs(x.pnl)));
+    const WD = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const wdays = WD.map(d => { const xs = sorted.filter(t => wib(t.date).wd === d); return { d, n: xs.length, pnl: sumOf(xs, t => t.pnl) }; }).filter(x => x.n);
+    const maxD = Math.max(1, ...wdays.map(x => Math.abs(x.pnl)));
+    const sess = SESSIONS.map(s => { const xs = sorted.filter(t => s.test(wib(t.date).hour)); return { ...s, n: xs.length, wr: xs.length ? xs.filter(t => t.pnl > 0).length / xs.length * 100 : 0, pnl: sumOf(xs, t => t.pnl) }; });
+    const maxS = Math.max(1, ...sess.map(x => Math.abs(x.pnl)));
+    const used = sess.filter(x => x.n);
+    const best = used.length ? used.reduce((a, b) => b.pnl > a.pnl ? b : a) : null;
+    const bestT = sorted.length ? Math.max(...sorted.map(t => t.pnl)) : 0, worstT = sorted.length ? Math.min(...sorted.map(t => t.pnl)) : 0;
+    const bar = (w, pos) => React.createElement("div", { className: "pe-bar" },
+        React.createElement("i", { style: { width: `${Math.max(2, w)}%`, background: pos ? '#34d399' : '#ff6b81' } }));
+    return React.createElement("div", { className: "pe" },
+        React.createElement("div", { className: "section-row" },
+            React.createElement("h2", null, "Ringkasan"),
+            React.createElement("span", { className: "muted" },
+                filtered.length,
+                " trade \u00B7 WIB")),
+        React.createElement("div", { className: "pe-tiles" }, tiles.map(([l, v, t]) => React.createElement("div", { className: "pe-tile", key: l },
+            React.createElement("span", null, l),
+            React.createElement("b", { className: t }, v)))),
+        React.createElement("div", { className: "pe-card" },
+            React.createElement("div", { className: "pe-tabs" }, [['growth', 'Growth'], ['balance', 'Balance'], ['profit', 'Profit'], ['daily', 'Daily P&L'], ['dd', 'Drawdown']].map(([k, l]) => React.createElement("button", { key: k, className: ct === k ? 'on' : '', onClick: () => setCt(k) }, l))),
+            React.createElement("p", { className: "pe-sub" }, CT.t),
+            React.createElement(MiniChart, { vals: CT.v, labels: lab, kind: CT.k, fmt: CT.f }),
+            React.createElement("div", { className: "pe-cap" },
+                React.createElement("span", null,
+                    React.createElement("i", { className: "dot g" }),
+                    "Setoran ",
+                    dep.length,
+                    "\u00D7 ",
+                    React.createElement("b", { className: "pos" }, fm(depSum))),
+                React.createElement("span", null,
+                    React.createElement("i", { className: "dot r" }),
+                    "Penarikan ",
+                    wdr.length,
+                    "\u00D7 ",
+                    React.createElement("b", { className: "neg" }, fm(wdSum)))),
+            hist.length > 0 && React.createElement("button", { className: "pe-link", onClick: () => setShowDet(!showDet) },
+                "Rincian ",
+                showDet ? '▴' : '▾'),
+            showDet && React.createElement("div", { className: "pe-chips" }, hist.slice().sort((a, b) => String(a.date).localeCompare(String(b.date))).map((h, i) => { const w = h.type === 'withdraw'; return React.createElement("div", { key: i, className: w ? 'neg' : 'pos' },
+                React.createElement("span", null, fmtLong(String(h.date).slice(0, 10))),
+                React.createElement("b", null,
+                    w ? '-' : '+',
+                    fm(h.amount))); }))),
+        React.createElement("div", { className: "pe-card" },
+            React.createElement("div", { className: "pe-head" },
+                React.createElement("h3", null, "Monthly gain"),
+                React.createElement("div", { className: "pe-years" }, years.map(y => React.createElement("button", { key: y, className: y === year ? 'on' : '', onClick: () => setYear(y) }, y)))),
+            React.createElement("div", { className: "pe-months" }, mon.map(m => { const mx = Math.max(1, ...mon.map(z => Math.abs(z.pnl))); return React.createElement("button", { key: m.i, className: mSel === m.i ? 'sel' : '', onClick: () => setMSel(m.i) },
+                React.createElement("i", { style: { height: `${m.n ? Math.max(6, Math.abs(m.pnl) / mx * 60) : 2}px`, background: m.pnl >= 0 ? '#34d399' : '#ff6b81', opacity: m.n ? 1 : .25 } }),
+                React.createElement("small", null, MN[m.i])); })),
+            React.createElement("div", { className: "pe-sum" },
+                React.createElement("div", null,
+                    React.createElement("span", null,
+                        "Gain ",
+                        MN[ms.i]),
+                    React.createElement("b", { className: tone(ms.pnl) }, pcs(ms.pnl, start))),
+                React.createElement("div", null,
+                    React.createElement("span", null, "Profit"),
+                    React.createElement("b", { className: tone(ms.pnl) }, sg(ms.pnl))),
+                React.createElement("div", null,
+                    React.createElement("span", null, "Trades"),
+                    React.createElement("b", null, ms.n)),
+                React.createElement("div", null,
+                    React.createElement("span", null, "Win rate"),
+                    React.createElement("b", null,
+                        ms.n ? Math.round(ms.wins / ms.n * 100) : 0,
+                        "%")))),
+        React.createElement("div", { className: "pe-card" },
+            React.createElement("h3", null,
+                "Performa per sesi ",
+                React.createElement("small", null, "(WIB, jam entry)")),
+            best ? React.createElement("div", { className: "pe-best" },
+                "\uD83C\uDFC6 Sesi terbaik: ",
+                React.createElement("b", null, best.name),
+                " \u00B7 ",
+                React.createElement("span", { className: tone(best.pnl) }, sg(best.pnl)),
+                " \u00B7 WR ",
+                best.wr.toFixed(0),
+                "% \u00B7 ",
+                best.n,
+                " posisi") : React.createElement("p", { className: "pe-empty" }, "Belum ada trade closed."),
+            sess.map(s => React.createElement("div", { className: `pe-row ${best && s.name === best.name ? 'best' : ''}`, key: s.name },
+                React.createElement("div", { className: "pe-rowhead" },
+                    React.createElement("div", null,
+                        React.createElement("strong", null, s.name),
+                        React.createElement("small", null,
+                            s.hrs,
+                            " WIB")),
+                    React.createElement("div", { className: "pe-meta" },
+                        React.createElement("span", null,
+                            s.n,
+                            " posisi"),
+                        React.createElement("span", null,
+                            s.n ? s.wr.toFixed(0) : 0,
+                            "% WR"),
+                        React.createElement("b", { className: tone(s.pnl) }, sg(s.pnl)))),
+                bar(s.n ? Math.abs(s.pnl) / maxS * 100 : 0, s.pnl >= 0))),
+            React.createElement("p", { className: "pe-note" }, "Pembagian jam (WIB): Asia 06\u201315, London 15\u201320, London\u2013New York 20\u201324, New York 00\u201304, sisanya sepi. Perkiraan, bukan jam resmi bursa.")),
+        React.createElement("div", { className: "pe-card" },
+            React.createElement("h3", null, "Distribusi win / loss"),
+            React.createElement("div", { className: "pe-donutwrap" },
+                React.createElement(Donut, { wins: wins.length, losses: losses.length }),
+                React.createElement("div", null,
+                    React.createElement("p", null,
+                        React.createElement("i", { className: "dot g" }),
+                        "Menang ",
+                        React.createElement("b", null, wins.length)),
+                    React.createElement("p", null,
+                        React.createElement("i", { className: "dot r" }),
+                        "Kalah ",
+                        React.createElement("b", null, losses.length))))),
+        React.createElement("div", { className: "pe-card" },
+            React.createElement("h3", null, "Analytics"),
+            React.createElement("div", { className: "pe-tiles two" },
+                React.createElement("div", { className: "pe-tile" },
+                    React.createElement("span", null, "Rata-rata win"),
+                    React.createElement("b", { className: "pos" }, wins.length ? sg(gW / wins.length) : '$0')),
+                React.createElement("div", { className: "pe-tile" },
+                    React.createElement("span", null, "Rata-rata loss"),
+                    React.createElement("b", { className: "neg" }, losses.length ? `-${fm(gL / losses.length)}` : '$0')),
+                React.createElement("div", { className: "pe-tile" },
+                    React.createElement("span", null, "Trade terbaik"),
+                    React.createElement("b", { className: tone(bestT) }, sg(bestT))),
+                React.createElement("div", { className: "pe-tile" },
+                    React.createElement("span", null, "Trade terburuk"),
+                    React.createElement("b", { className: tone(worstT) }, sg(worstT))))),
+        React.createElement("div", { className: "pe-card" },
+            React.createElement("h3", null, "P&L per pair"),
+            syms.length ? syms.slice().sort((a, b) => b.pnl - a.pnl).map(x => React.createElement("div", { className: "pe-row", key: x.s },
+                React.createElement("div", { className: "pe-rowhead" },
+                    React.createElement("strong", null, x.s),
+                    React.createElement("b", { className: tone(x.pnl) }, sg(x.pnl))),
+                bar(Math.abs(x.pnl) / maxSym * 100, x.pnl >= 0))) : React.createElement("p", { className: "pe-empty" }, "Belum ada data.")),
+        React.createElement("div", { className: "pe-card" },
+            React.createElement("h3", null, "Pair terpopuler"),
+            syms.length ? syms.map(x => React.createElement("div", { className: "pe-row", key: x.s },
+                React.createElement("div", { className: "pe-rowhead" },
+                    React.createElement("strong", null, x.s),
+                    React.createElement("span", null,
+                        (x.n / sorted.length * 100).toFixed(1),
+                        "% (",
+                        x.n,
+                        ")")),
+                React.createElement("div", { className: "pe-bar" },
+                    React.createElement("i", { style: { width: `${x.n / sorted.length * 100}%`, background: '#6b8dff' } })))) : React.createElement("p", { className: "pe-empty" }, "Belum ada data.")),
+        React.createElement("div", { className: "pe-card" },
+            React.createElement("h3", null,
+                "Performa per hari ",
+                React.createElement("small", null, "(WIB)")),
+            wdays.length ? wdays.map(x => React.createElement("div", { className: "pe-row", key: x.d },
+                React.createElement("div", { className: "pe-rowhead" },
+                    React.createElement("strong", null, x.d),
+                    React.createElement("div", { className: "pe-meta" },
+                        React.createElement("span", null,
+                            x.n,
+                            " posisi"),
+                        React.createElement("b", { className: tone(x.pnl) }, sg(x.pnl)))),
+                bar(Math.abs(x.pnl) / maxD * 100, x.pnl >= 0))) : React.createElement("p", { className: "pe-empty" }, "Belum ada data.")));
+}
 function Performance({ onWallet, account, trades, period, setPeriod, customStart, customEnd, setCustomStart, setCustomEnd }) {
     const [rangeOpen, setRangeOpen] = useState(false);
     const [draft, setDraft] = useState({ s: '', e: '' });
@@ -388,46 +647,13 @@ function Performance({ onWallet, account, trades, period, setPeriod, customStart
                 filtered.length,
                 " closed trades")),
         React.createElement("div", { className: "metrics-grid" },
-            React.createElement(Metric, { label: "Win rate", tone: filtered.length ? (winRate >= 50 ? 'pos' : 'neg') : '', value: `${winRate}%`, icon: React.createElement(Target, null), accent: "blue" }),
-            React.createElement(Metric, { label: "Average winner", tone: avgWin > 0 ? 'pos' : '', value: money(avgWin, account.currency), sub: `${pct(avgWin, account.balance)} of balance`, icon: React.createElement(ArrowUpRight, null), accent: "green" }),
-            React.createElement(Metric, { label: "Average loser", tone: avgLoss < 0 ? 'neg' : '', value: money(avgLoss, account.currency), sub: `${pct(avgLoss, account.balance)} of balance`, icon: React.createElement(ArrowDownRight, null), accent: "red" }),
-            React.createElement(Metric, { label: "Winners / Losers", value: React.createElement(React.Fragment, null,
-                    React.createElement("span", { className: wins.length ? 'val-pos' : '' }, wins.length),
-                    " / ",
-                    React.createElement("span", { className: losses.length ? 'val-neg' : '' }, losses.length)), icon: React.createElement(Activity, null), accent: "purple" }),
-            React.createElement(Metric, { label: "Max drawdown", tone: maxDd > 0 ? 'neg' : '', value: money(maxDd, account.currency), sub: `${pct(-maxDd, account.balance)} from peak`, icon: React.createElement(TrendingDown, null), accent: "orange" }),
-            React.createElement(Metric, { label: "High water mark", tone: hwm > 0 ? 'pos' : '', value: `${hwm > 0 ? '+' : ''}${money(hwm, account.currency)}`, sub: `${pct(hwm, account.balance)} profit tertinggi`, icon: React.createElement(TrendingUp, null), accent: "green" })),
-        React.createElement("div", { className: "split-grid" },
-            React.createElement("div", { className: "panel" },
-                React.createElement("div", { className: "panel-title" },
-                    React.createElement("h2", null, "Symbols"),
-                    React.createElement("span", null, "Performance by pair")),
-                bySymbol.length ? bySymbol.map(x => React.createElement("div", { className: "symbol-row", key: x.symbol },
-                    React.createElement("div", { className: "symbol-icon" }, x.symbol.slice(0, 2)),
-                    React.createElement("strong", null, x.symbol),
-                    React.createElement("span", { className: "symbol-count" },
-                        x.count,
-                        " trades"),
-                    React.createElement("b", { className: x.pnl >= 0 ? 'positive' : 'negative' },
-                        x.pnl >= 0 ? '+' : '',
-                        money(x.pnl, account.currency)))) : React.createElement("p", { className: "empty-copy" }, "Belum ada closed trade pada filter ini.")),
-            React.createElement("div", { className: "panel" },
-                React.createElement("div", { className: "panel-title" },
-                    React.createElement("h2", null, "Days performance"),
-                    React.createElement("span", null, "Net P&L \u00B7 profit + loss")),
-                days.map(x => React.createElement("div", { className: "day-row", key: x.day },
-                    React.createElement("div", null,
-                        React.createElement("span", null, x.day),
-                        React.createElement("small", null,
-                            x.count,
-                            " trades \u00B7 ",
-                            x.wins,
-                            "W / ",
-                            x.losses,
-                            "L")),
-                    React.createElement("b", { className: x.pnl >= 0 ? 'positive' : 'negative' },
-                        x.pnl >= 0 ? '+' : '',
-                        money(x.pnl, account.currency)))))),
+            React.createElement(Metric, { tone: filtered.length ? (winRate >= 50 ? 'pos' : 'neg') : '', label: "Win rate", value: `${winRate}%`, icon: React.createElement(Target, null), accent: "blue" }),
+            React.createElement(Metric, { tone: avgWin > 0 ? 'pos' : '', label: "Average winner", value: money(avgWin, account.currency), sub: `${pct(avgWin, account.balance)} of balance`, icon: React.createElement(ArrowUpRight, null), accent: "green" }),
+            React.createElement(Metric, { tone: avgLoss < 0 ? 'neg' : '', label: "Average loser", value: money(avgLoss, account.currency), sub: `${pct(avgLoss, account.balance)} of balance`, icon: React.createElement(ArrowDownRight, null), accent: "red" }),
+            React.createElement(Metric, { label: "Winners / Losers", value: `${wins.length} / ${losses.length}`, icon: React.createElement(Activity, null), accent: "purple" }),
+            React.createElement(Metric, { tone: maxDd > 0 ? 'neg' : '', label: "Max drawdown", value: money(maxDd, account.currency), sub: `${pct(-maxDd, account.balance)} from peak`, icon: React.createElement(TrendingDown, null), accent: "orange" }),
+            React.createElement(Metric, { tone: hwm > 0 ? 'pos' : '', label: "High water mark", value: `${hwm > 0 ? '+' : ''}${money(hwm, account.currency)}`, sub: `${pct(hwm, account.balance)} profit tertinggi`, icon: React.createElement(TrendingUp, null), accent: "green" })),
+        React.createElement(PerfExtra, { account: account, trades: trades, filtered: filtered, total: total, maxDd: maxDd }),
         rangeOpen && React.createElement("div", { className: "modal-backdrop center" },
             React.createElement("div", { className: "range-dialog" },
                 React.createElement("h3", null, "Custom Date Range"),
@@ -448,7 +674,7 @@ function Performance({ onWallet, account, trades, period, setPeriod, customStart
                             return;
                         } setCustomStart(draft.s); setCustomEnd(draft.e); setRangeOpen(false); } }, "Confirm")))));
 }
-function Journal({ account, trades, filters, setFilters, expanded, setExpanded, onAdd, onDelete, onClose }) {
+function Journal({ account, trades, filters, setFilters, expanded, setExpanded, onAdd, onDelete, onClose, onEdit }) {
     const [openWeeks, setOpenWeeks] = useState({});
     const filtered = trades.filter(t => (filters.status === 'all' || t.status === filters.status) && (filters.side === 'all' || t.side === filters.side) && (!filters.search || t.symbol.toLowerCase().includes(filters.search.toLowerCase()) || String(t.setup || '').toLowerCase().includes(filters.search.toLowerCase())) && (!filters.date || dateOnly(t.date) === filters.date));
     const groups = filtered.reduce((acc, t) => { const key = dateOnly(t.date); (acc[key] || (acc[key] = [])).push(t); return acc; }, {});
@@ -487,7 +713,7 @@ function Journal({ account, trades, filters, setFilters, expanded, setExpanded, 
                 " ",
                 filtered.length,
                 " shown")),
-        (() => { const isoOf = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; const weeks = {}; Object.keys(groups).forEach(day => { const d = new Date(`${day}T12:00`); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); const wk = isoOf(d); (weeks[wk] || (weeks[wk] = {}))[day] = groups[day]; }); return Object.keys(weeks).sort().reverse().map((wk, wi) => { const w = weeks[wk]; const list = Object.values(w).flat(); const pnl = list.reduce((x, t) => x + (t.status === 'closed' ? Number(t.pnl) || 0 : 0), 0); const st = new Date(`${wk}T12:00`); const en = new Date(st); en.setDate(st.getDate() + 6); const open = openWeeks[wk] !== undefined ? openWeeks[wk] : (wi === 0 || !!filters.date); const label = `${st.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - ${en.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`; return React.createElement("div", { className: "week-block", key: wk },
+        (() => { const isoOf = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; const weeks = {}; Object.keys(groups).forEach(day => { const d = new Date(`${day}T12:00`); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); const wk = isoOf(d); (weeks[wk] || (weeks[wk] = {}))[day] = groups[day]; }); return Object.keys(weeks).sort().reverse().map((wk, wi) => { const w = weeks[wk]; const list = Object.values(w).flat(); const pnl = list.reduce((x, t) => x + (t.status === 'closed' ? Number(t.pnl) || 0 : 0), 0); const st = new Date(`${wk}T12:00`); const en = new Date(st); en.setDate(st.getDate() + 6); const open = openWeeks[wk] !== undefined ? openWeeks[wk] : !!filters.date; const label = `${st.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - ${en.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`; return React.createElement("div", { className: "week-block", key: wk },
             React.createElement("button", { className: "week-head", onClick: () => setOpenWeeks({ ...openWeeks, [wk]: !open }) },
                 React.createElement("div", null,
                     React.createElement("strong", null, label),
@@ -507,7 +733,7 @@ function Journal({ account, trades, filters, setFilters, expanded, setExpanded, 
                         " \u00B7 ",
                         w[day].length,
                         " posisi")),
-                w[day].map(t => React.createElement(TradeCard, { key: t.id, trade: t, expanded: expanded === t.id, onToggle: () => setExpanded(expanded === t.id ? null : t.id), onDelete: () => onDelete(t.id), onClose: () => onClose(t) }))); })); }); })(),
+                w[day].map(t => React.createElement(TradeCard, { key: t.id, trade: t, expanded: expanded === t.id, onToggle: () => setExpanded(expanded === t.id ? null : t.id), onDelete: () => onDelete(t.id), onClose: () => onClose(t), onEdit: () => onEdit(t) }))); })); }); })(),
         !filtered.length && React.createElement("div", { className: "empty-state" },
             React.createElement(BookOpen, { size: 26 }),
             React.createElement("strong", null, "Tidak ada trade yang cocok"),
@@ -515,7 +741,7 @@ function Journal({ account, trades, filters, setFilters, expanded, setExpanded, 
         React.createElement("button", { className: "fab", onClick: onAdd },
             React.createElement(Plus, { size: 25 })));
 }
-function TradeCard({ trade, expanded, onToggle, onDelete, onClose }) { var _a, _b, _c, _d; return React.createElement("div", { className: "trade-card", onClick: onToggle },
+function TradeCard({ trade, expanded, onToggle, onDelete, onClose, onEdit }) { var _a, _b, _c, _d; return React.createElement("div", { className: "trade-card", onClick: onToggle },
     React.createElement("div", { className: "trade-main" },
         React.createElement("div", { className: `side-dot ${trade.status === 'open' ? 'blue' : trade.pnl >= 0 ? 'green' : 'red'}` }),
         React.createElement("div", { className: "trade-info" },
@@ -564,9 +790,11 @@ function TradeCard({ trade, expanded, onToggle, onDelete, onClose }) { var _a, _
             React.createElement("b", null, new Date(trade.closeDate).toLocaleString('id-ID'))),
         ((_d = trade.screenshots) === null || _d === void 0 ? void 0 : _d.length) > 0 && React.createElement("div", { className: "screenshot-strip" }, trade.screenshots.map((src, i) => React.createElement("img", { key: i, src: src, alt: `Chart ${i + 1}` }))),
         trade.status === 'open' && React.createElement("button", { className: "secondary-btn detail-action", onClick: e => { e.stopPropagation(); onClose(); } }, "Tutup posisi"),
-        React.createElement("button", { className: "delete-btn", onClick: e => { e.stopPropagation(); onDelete(); } },
-            React.createElement(Trash2, { size: 14 }),
-            " Hapus"))); }
+        React.createElement("div", { className: "trade-actions" },
+            React.createElement("button", { className: "edit-btn", onClick: e => { e.stopPropagation(); onEdit(); } }, "\u270E Edit"),
+            React.createElement("button", { className: "delete-btn", onClick: e => { e.stopPropagation(); onDelete(); } },
+                React.createElement(Trash2, { size: 14 }),
+                " Hapus")))); }
 function Tools({ account, trades, onAdd, onExport, onBackup, onRestore, onNewAccount }) { const [calc, setCalc] = useState({ symbol: 'XAUUSD', entry: '', sl: '', tp: '', lots: '0.01' }); const riskDistance = Math.abs(Number(calc.entry || 0) - Number(calc.sl || 0)); const riskUsd = riskFor(calc.entry, calc.sl, calc.lots, calc.symbol); const rewardUsd = rewardFor(calc.entry, calc.tp, calc.lots, calc.symbol); return React.createElement("section", null,
     React.createElement(PageHeading, { eyebrow: "TOOLS / UTILITIES", title: "Trading Tools", description: "Kalkulator, backup, dan pengaturan akun.", action: React.createElement("button", { className: "icon-btn" },
             React.createElement(Settings2, { size: 18 })) }),
@@ -653,8 +881,9 @@ function Tools({ account, trades, onAdd, onExport, onBackup, onRestore, onNewAcc
         "Edge Journal v",
         APP_VERSION,
         " \u00B7 data tersimpan lokal di perangkat ini")); }
-function AddTradeModal({ account, onClose, onSave }) {
-    const [form, setForm] = useState({ symbol: 'XAUUSD', side: 'Long', date: isoNow(), entry: '', exit: '', lots: '0.01', sl: '', tp: '', fees: '0', setup: '', screenshots: [] });
+function AddTradeModal({ account, onClose, onSave, initial }) {
+    var _a, _b, _c;
+    const [form, setForm] = useState(initial ? { ...initial, entry: String((_a = initial.entry) !== null && _a !== void 0 ? _a : ''), exit: initial.exit == null ? '' : String(initial.exit), lots: String((_b = initial.lots) !== null && _b !== void 0 ? _b : ''), sl: initial.sl == null ? '' : String(initial.sl), tp: initial.tp == null ? '' : String(initial.tp), fees: String((_c = initial.fees) !== null && _c !== void 0 ? _c : 0), setup: initial.setup || '', screenshots: initial.screenshots || [] } : { symbol: 'XAUUSD', side: 'Long', date: isoNow(), entry: '', exit: '', lots: '0.01', sl: '', tp: '', fees: '0', setup: '', screenshots: [] });
     const [showAdjust, setShowAdjust] = useState(false);
     const [calculated, setCalculated] = useState(false);
     const risk = riskFor(form.entry, form.sl, form.lots, form.symbol);
@@ -673,8 +902,8 @@ function AddTradeModal({ account, onClose, onSave }) {
         React.createElement("div", { className: "modal wide-modal", onPaste: handlePaste },
             React.createElement("div", { className: "modal-head" },
                 React.createElement("div", null,
-                    React.createElement("p", { className: "eyebrow" }, "NEW TRADE / MANUAL ENTRY"),
-                    React.createElement("h2", null, "Tambah trade")),
+                    React.createElement("p", { className: "eyebrow" }, initial ? 'EDIT TRADE / UPDATE' : 'NEW TRADE / MANUAL ENTRY'),
+                    React.createElement("h2", null, initial ? 'Edit trade' : 'Tambah trade')),
                 React.createElement("button", { className: "icon-btn", onClick: onClose },
                     React.createElement(X, { size: 19 }))),
             React.createElement("form", { onSubmit: submit },

@@ -49,6 +49,12 @@
 .cal-cell.win{background:#123d33;border-color:#2f8f6f}.cal-cell.win b{color:#5ff0b0}
 .cal-cell.loss{background:#4a2230;border-color:#a8485f}.cal-cell.loss b{color:#ff8da0}
 .cal-cell.flat{background:#1d2742}
+
+.trend.positive,.sub-pos{color:#34d399}.trend.negative,.sub-neg{color:#ff6b81}
+.account-switcher .acc-name{color:#e8edff;font-size:13px;font-weight:600;padding:0 6px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.modal-backdrop.center .modal{border-radius:20px;max-height:88vh;overflow-y:auto;width:min(480px,100%);margin:0}
+
+.metric strong.val-pos,.metric strong .val-pos{color:#34d399}.metric strong.val-neg,.metric strong .val-neg{color:#ff6b81}.metric small.sub-pos{color:#34d399}.metric small.sub-neg{color:#ff6b81}
 </style>
 </head>
 <body>
@@ -218,6 +224,7 @@ function App() {
     const [customEnd, setCustomEnd] = useState('');
     const [showCalendar, setShowCalendar] = useState(false);
     const [showAccount, setShowAccount] = useState(false);
+    const [accountMode, setAccountMode] = useState('manage');
     const [showAdd, setShowAdd] = useState(false);
     const [closingTrade, setClosingTrade] = useState(null);
     const [expanded, setExpanded] = useState(null);
@@ -266,9 +273,9 @@ function App() {
             React.createElement("div", { className: "top-actions" },
                 React.createElement("button", { className: "header-icon", onClick: () => setShowCalendar(true), "aria-label": "Buka kalender" },
                     React.createElement(CalendarDays, { size: 17 })),
-                React.createElement("button", { className: "account-switcher", onClick: () => setShowAccount(true) },
+                React.createElement("button", { className: "account-switcher", onClick: () => { setAccountMode('manage'); setShowAccount(true); }, "aria-label": "Account management" },
                     React.createElement(UserRound, { size: 15 }),
-                    React.createElement("select", { "aria-label": "Pilih akun aktif", value: activeAccountId, onClick: e => e.stopPropagation(), onChange: e => selectAccount(e.target.value) }, accounts.map(a => React.createElement("option", { key: a.id, value: a.id }, a.name))),
+                    React.createElement("span", { className: "acc-name" }, activeAccount.name),
                     React.createElement(ChevronDown, { size: 13 })))),
         React.createElement("div", { className: "desktop-layout" },
             React.createElement("aside", { className: "side-nav" },
@@ -281,7 +288,7 @@ function App() {
                     React.createElement("strong", null, activeAccount.name),
                     React.createElement("small", null, money(activeAccount.balance, activeAccount.currency)))),
             React.createElement("main", { className: "main-content" },
-                tab === 'performance' && React.createElement(Performance, { account: activeAccount, trades: trades, period: period, setPeriod: setPeriod, customStart: customStart, customEnd: customEnd, setCustomStart: setCustomStart, setCustomEnd: setCustomEnd }),
+                tab === 'performance' && React.createElement(Performance, { onWallet: () => { setAccountMode('capital'); setShowAccount(true); }, account: activeAccount, trades: trades, period: period, setPeriod: setPeriod, customStart: customStart, customEnd: customEnd, setCustomStart: setCustomStart, setCustomEnd: setCustomEnd }),
                 tab === 'journal' && React.createElement(Journal, { account: activeAccount, trades: trades, filters: journalFilters, setFilters: setJournalFilters, expanded: expanded, setExpanded: setExpanded, onAdd: () => setShowAdd(true), onDelete: deleteTrade, onClose: setClosingTrade }),
                 tab === 'tools' && React.createElement(Tools, { account: activeAccount, trades: trades, onAdd: () => setShowAdd(true), onExport: exportCsv, onBackup: backupJson, onRestore: restoreJson, onNewAccount: () => setShowAccount(true) }))),
         React.createElement("nav", { className: "bottom-nav" },
@@ -290,7 +297,7 @@ function App() {
             React.createElement(NavItem, { active: tab === 'performance', onClick: () => setTab('performance'), icon: React.createElement(BarChart3, null), label: "Performance" })),
         showAdd && React.createElement(AddTradeModal, { account: activeAccount, onClose: () => setShowAdd(false), onSave: addTrade }),
         closingTrade && React.createElement(CloseTradeModal, { trade: closingTrade, onClose: () => setClosingTrade(null), onSave: closeTrade }),
-        showAccount && React.createElement(AccountModal, { accounts: accounts, activeAccount: activeAccount, onClose: () => setShowAccount(false), onSelect: selectAccount, onCreate: addAccount, onDelete: deleteAccount, onUpdate: updateAccount, onCapital: recordCapital, onBackup: backupJson, onRestore: restoreJson, onExport: exportCsv }),
+        showAccount && React.createElement(AccountModal, { initialMode: accountMode, accounts: accounts, activeAccount: activeAccount, onClose: () => { setShowAccount(false); setAccountMode('manage'); }, onSelect: selectAccount, onCreate: addAccount, onDelete: deleteAccount, onUpdate: updateAccount, onCapital: recordCapital, onBackup: backupJson, onRestore: restoreJson, onExport: exportCsv }),
         showCalendar && React.createElement(CalendarModal, { trades: trades, onClose: () => setShowCalendar(false), onSelectDate: chooseCalendarDate }));
 }
 function NavItem({ active, onClick, icon, label }) { return React.createElement("button", { className: active ? 'nav-item active' : 'nav-item', onClick: onClick },
@@ -302,12 +309,12 @@ function PageHeading({ eyebrow, title, description, action }) { return React.cre
         React.createElement("h1", null, title),
         React.createElement("p", { className: "muted" }, description)),
     action); }
-function Metric({ label, value, icon, accent, sub }) { return React.createElement("div", { className: "metric" },
+function Metric({ label, value, icon, accent, sub, tone }) { const n = parseFloat(String(sub || '').replace('+', '')); const st = Number.isFinite(n) && n !== 0 ? (n > 0 ? 'sub-pos' : 'sub-neg') : ''; return React.createElement("div", { className: "metric" },
     React.createElement("div", { className: `metric-icon ${accent}` }, icon),
     React.createElement("span", null, label),
-    React.createElement("strong", null, value),
-    sub && React.createElement("small", null, sub)); }
-function Performance({ account, trades, period, setPeriod, customStart, customEnd, setCustomStart, setCustomEnd }) {
+    React.createElement("strong", { className: tone === 'pos' ? 'val-pos' : tone === 'neg' ? 'val-neg' : '' }, value),
+    sub && React.createElement("small", { className: st }, sub)); }
+function Performance({ onWallet, account, trades, period, setPeriod, customStart, customEnd, setCustomStart, setCustomEnd }) {
     const [rangeOpen, setRangeOpen] = useState(false);
     const [draft, setDraft] = useState({ s: '', e: '' });
     const filtered = trades.filter(t => t.status === 'closed' && withinPeriod(t.date, period, customStart, customEnd));
@@ -328,7 +335,7 @@ function Performance({ account, trades, period, setPeriod, customStart, customEn
     const bySymbol = SYMBOLS.map(symbol => { const xs = filtered.filter(t => t.symbol === symbol); return { symbol, count: xs.length, pnl: xs.reduce((a, t) => a + t.pnl, 0) }; }).filter(x => x.count);
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => { const xs = filtered.filter(t => new Date(t.date).toLocaleDateString('en-US', { weekday: 'short' }) === day); return { day, count: xs.length, wins: xs.filter(t => t.pnl > 0).length, losses: xs.filter(t => t.pnl < 0).length, pnl: xs.reduce((a, t) => a + (Number(t.pnl) || 0), 0) }; }).filter(x => x.count).sort((a, b) => b.pnl - a.pnl);
     return React.createElement("section", null,
-        React.createElement(PageHeading, { eyebrow: "OVERVIEW / ACCOUNT", title: "Performance", description: `Analisis ${period.toLowerCase()} untuk ${account.name}.`, action: React.createElement("button", { className: "icon-btn" },
+        React.createElement(PageHeading, { eyebrow: "OVERVIEW / ACCOUNT", title: "Performance", description: `Analisis ${period.toLowerCase()} untuk ${account.name}.`, action: React.createElement("button", { className: "icon-btn", onClick: onWallet, "aria-label": "Deposit dan Withdraw" },
                 React.createElement(Wallet, { size: 18 })) }),
         React.createElement("div", { className: "hero-card" },
             React.createElement("div", null,
@@ -336,7 +343,7 @@ function Performance({ account, trades, period, setPeriod, customStart, customEn
                 React.createElement("div", { className: total >= 0 ? 'hero-number positive' : 'hero-number negative' },
                     total >= 0 ? '+' : '',
                     money(total, account.currency)),
-                React.createElement("span", { className: "trend" },
+                React.createElement("span", { className: `trend ${total >= 0 ? 'positive' : 'negative'}` },
                     total >= 0 ? React.createElement(ArrowUpRight, { size: 15 }) : React.createElement(ArrowDownRight, { size: 15 }),
                     " ",
                     account.balance ? `${total >= 0 ? '+' : ''}${((total / account.balance) * 100).toFixed(2)}%` : '0.00%',
@@ -381,12 +388,15 @@ function Performance({ account, trades, period, setPeriod, customStart, customEn
                 filtered.length,
                 " closed trades")),
         React.createElement("div", { className: "metrics-grid" },
-            React.createElement(Metric, { label: "Win rate", value: `${winRate}%`, icon: React.createElement(Target, null), accent: "blue" }),
-            React.createElement(Metric, { label: "Average winner", value: money(avgWin, account.currency), sub: `${pct(avgWin, account.balance)} of balance`, icon: React.createElement(ArrowUpRight, null), accent: "green" }),
-            React.createElement(Metric, { label: "Average loser", value: money(avgLoss, account.currency), sub: `${pct(avgLoss, account.balance)} of balance`, icon: React.createElement(ArrowDownRight, null), accent: "red" }),
-            React.createElement(Metric, { label: "Winners / Losers", value: `${wins.length} / ${losses.length}`, icon: React.createElement(Activity, null), accent: "purple" }),
-            React.createElement(Metric, { label: "Max drawdown", value: money(maxDd, account.currency), sub: `${pct(-maxDd, account.balance)} from peak`, icon: React.createElement(TrendingDown, null), accent: "orange" }),
-            React.createElement(Metric, { label: "High water mark", value: `${hwm > 0 ? '+' : ''}${money(hwm, account.currency)}`, sub: `${pct(hwm, account.balance)} profit tertinggi`, icon: React.createElement(TrendingUp, null), accent: "green" })),
+            React.createElement(Metric, { label: "Win rate", tone: filtered.length ? (winRate >= 50 ? 'pos' : 'neg') : '', value: `${winRate}%`, icon: React.createElement(Target, null), accent: "blue" }),
+            React.createElement(Metric, { label: "Average winner", tone: avgWin > 0 ? 'pos' : '', value: money(avgWin, account.currency), sub: `${pct(avgWin, account.balance)} of balance`, icon: React.createElement(ArrowUpRight, null), accent: "green" }),
+            React.createElement(Metric, { label: "Average loser", tone: avgLoss < 0 ? 'neg' : '', value: money(avgLoss, account.currency), sub: `${pct(avgLoss, account.balance)} of balance`, icon: React.createElement(ArrowDownRight, null), accent: "red" }),
+            React.createElement(Metric, { label: "Winners / Losers", value: React.createElement(React.Fragment, null,
+                    React.createElement("span", { className: wins.length ? 'val-pos' : '' }, wins.length),
+                    " / ",
+                    React.createElement("span", { className: losses.length ? 'val-neg' : '' }, losses.length)), icon: React.createElement(Activity, null), accent: "purple" }),
+            React.createElement(Metric, { label: "Max drawdown", tone: maxDd > 0 ? 'neg' : '', value: money(maxDd, account.currency), sub: `${pct(-maxDd, account.balance)} from peak`, icon: React.createElement(TrendingDown, null), accent: "orange" }),
+            React.createElement(Metric, { label: "High water mark", tone: hwm > 0 ? 'pos' : '', value: `${hwm > 0 ? '+' : ''}${money(hwm, account.currency)}`, sub: `${pct(hwm, account.balance)} profit tertinggi`, icon: React.createElement(TrendingUp, null), accent: "green" })),
         React.createElement("div", { className: "split-grid" },
             React.createElement("div", { className: "panel" },
                 React.createElement("div", { className: "panel-title" },
@@ -800,11 +810,12 @@ function AdjustRiskModal({ calc, suggestedLots, onClose, onApply }) { const [ris
                 React.createElement("span", null, "Contract"),
                 React.createElement("strong", null, contractSize(calc.symbol).toLocaleString()))),
         React.createElement("button", { className: "primary-btn", onClick: () => onApply(lots ? lots.toFixed(2) : calc.lots) }, "Apply lot size"))); }
-function AccountModal({ accounts, activeAccount, onClose, onSelect, onCreate, onDelete, onUpdate, onCapital, onBackup, onRestore, onExport }) { const [mode, setMode] = useState('manage'); const [form, setForm] = useState({ name: '', firstDeposit: new Date().toISOString().slice(0, 10), currency: 'USD', balance: '' }); const [capital, setCapital] = useState({ type: 'deposit', amount: '', date: new Date().toISOString().slice(0, 10), note: '' }); const set = (k, v) => setForm({ ...form, [k]: v }); const setCapitalField = (k, v) => setCapital({ ...capital, [k]: v }); function submit(e) { e.preventDefault(); if (form.name.trim())
+function AccountModal({ initialMode = 'manage', accounts, activeAccount, onClose, onSelect, onCreate, onDelete, onUpdate, onCapital, onBackup, onRestore, onExport }) { const [mode, setMode] = useState(initialMode); const [form, setForm] = useState({ name: '', firstDeposit: new Date().toISOString().slice(0, 10), currency: 'USD', balance: '' }); const [capital, setCapital] = useState({ type: 'deposit', amount: '', date: new Date().toISOString().slice(0, 10), note: '' }); const set = (k, v) => setForm({ ...form, [k]: v }); const setCapitalField = (k, v) => setCapital({ ...capital, [k]: v }); function submit(e) { e.preventDefault(); if (form.name.trim())
     onCreate(form); } function submitCapital(e) { e.preventDefault(); if (Number(capital.amount) > 0) {
     onCapital(capital);
     setCapital({ ...capital, amount: '', note: '' });
-} } return React.createElement("div", { className: "modal-backdrop" },
+} } return React.createElement("div", { className: "modal-backdrop center", onClick: e => { if (e.target === e.currentTarget)
+        onClose(); } },
     React.createElement("div", { className: "modal wide-modal" },
         React.createElement("div", { className: "modal-head" },
             React.createElement("div", null,
@@ -980,6 +991,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
 <script>
 setTimeout(function(){var b=document.getElementById('boot');if(b)b.textContent='Gagal memuat. Pastikan HP terhubung internet lalu muat ulang halaman ini.';},15000);
 </script>
-<script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});}</script>
+<script>if("serviceWorker" in navigator){try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});}</script>
 </body>
 </html>

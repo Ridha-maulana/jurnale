@@ -72,6 +72,19 @@
 .pe-row{margin-bottom:12px}.pe-row.best .pe-bar{box-shadow:0 0 0 1px #2f8f6f}.pe-rowhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;font-size:13px}.pe-rowhead small{display:block;color:#7d8bab;font-size:10px;margin-top:2px}.pe-meta{display:flex;gap:10px;align-items:center;font-size:11px;color:#8a94ab}.pe-meta b{font-size:13px}
 .pe-bar{height:8px;border-radius:6px;background:#0b1222;overflow:hidden}.pe-bar i{display:block;height:100%;border-radius:6px}.pe-note{font-size:10.5px;color:#7d8bab;line-height:1.5;margin:6px 0 0}
 .pe-donutwrap{display:flex;align-items:center;gap:20px}.pe-donut{width:140px;height:140px;flex:none}.pe-donutwrap p{margin:8px 0;font-size:14px;display:flex;align-items:center}.pe-donutwrap b{margin-left:10px}
+
+.pe-card .cal-nav{display:flex;align-items:center;justify-content:space-between;margin:2px 0 10px}.pe-card .cal-nav strong{font-size:13px}
+.pe-card .cal-week,.pe-card .cal-grid{gap:4px}.pe-card .cal-cell{min-height:62px;padding:5px 4px}.pe-card .cal-cell b{font-size:9.5px}.pe-card .cal-cell small{font-size:8px}
+.pe-sub2{color:#7d8bab;font-size:11px;font-weight:400}.dna-grade{background:#2a2158;color:#c4b5ff;border-radius:12px;padding:8px 12px;font-size:12px;font-weight:700;white-space:nowrap}
+.dna-top{display:grid;grid-template-columns:1fr;gap:6px;justify-items:center}.dna-radar{width:100%;max-width:300px;height:auto}.dna-bars{width:100%;display:grid;gap:10px}.dna-barhead{display:flex;justify-content:space-between;font-size:12px;color:#aab6cf;margin-bottom:5px}.dna-barhead b{color:#eef2ff}
+.dna-quick{background:#0b1222;border-radius:12px;padding:11px 12px;font-size:12.5px;line-height:1.55;color:#aab6cf;margin:14px 0 6px}.dna-quick b{color:#eef2ff}
+.dna-item{border-left:4px solid #3a4d78;background:#0b1222;border-radius:12px;padding:12px;margin-top:10px}.dna-item.pos{border-color:#34d399}.dna-item.mid{border-color:#f5b84b}.dna-item.neg{border-color:#ff6b81}
+.dna-ihead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.dna-badge{font-size:10.5px;font-weight:700;border-radius:8px;padding:4px 8px}.dna-badge.pos{background:#10342b;color:#34d399}.dna-badge.mid{background:#3a2f12;color:#f5b84b}.dna-badge.neg{background:#3a1d29;color:#ff8da0}
+.dna-meta{display:block;color:#7d8bab;font-size:11px;margin:6px 0}.dna-item p{margin:6px 0 0;font-size:12.5px;line-height:1.55;color:#aab6cf}.dna-tip.pos{color:#34d399}.dna-tip.mid{color:#f5b84b}.dna-tip.neg{color:#ff8da0}
+
+.dna-title{margin-top:10px}.dna-title h2{margin:0;font-size:20px}.dna-sh{display:flex;align-items:center;gap:8px;margin:0}.dna-sh svg{color:#9b82ff}
+.dna-ihead .dna-meta{margin:0 0 0 auto;text-align:right;font-size:10.5px}.dna-item>p:first-of-type{margin-top:8px}
+@media(min-width:640px){.dna-top{grid-template-columns:1fr 1fr;align-items:center}}
 </style>
 </head>
 <body>
@@ -309,7 +322,7 @@ function App() {
                     React.createElement("strong", null, activeAccount.name),
                     React.createElement("small", null, money(activeAccount.balance, activeAccount.currency)))),
             React.createElement("main", { className: "main-content" },
-                tab === 'performance' && React.createElement(Performance, { onWallet: () => { setAccountMode('capital'); setShowAccount(true); }, account: activeAccount, trades: trades, period: period, setPeriod: setPeriod, customStart: customStart, customEnd: customEnd, setCustomStart: setCustomStart, setCustomEnd: setCustomEnd }),
+                tab === 'performance' && React.createElement(Performance, { onSelectDate: chooseCalendarDate, onWallet: () => { setAccountMode('capital'); setShowAccount(true); }, account: activeAccount, trades: trades, period: period, setPeriod: setPeriod, customStart: customStart, customEnd: customEnd, setCustomStart: setCustomStart, setCustomEnd: setCustomEnd }),
                 tab === 'journal' && React.createElement(Journal, { account: activeAccount, trades: trades, filters: journalFilters, setFilters: setJournalFilters, expanded: expanded, setExpanded: setExpanded, onAdd: () => setShowAdd(true), onDelete: deleteTrade, onClose: setClosingTrade, onEdit: setEditingTrade }),
                 tab === 'tools' && React.createElement(Tools, { account: activeAccount, trades: trades, onAdd: () => setShowAdd(true), onExport: exportCsv, onBackup: backupJson, onRestore: restoreJson, onNewAccount: () => setShowAccount(true) }))),
         React.createElement("nav", { className: "bottom-nav" },
@@ -376,7 +389,7 @@ function Donut({ wins, losses }) {
             tot ? wr.toFixed(1) : '0',
             "%"));
 }
-function PerfExtra({ account, trades, filtered, total, maxDd }) {
+function PerfExtra({ account, trades, filtered, total, maxDd, onSelectDate }) {
     const cur = account.currency;
     const fm = n => money(n, cur);
     const sg = n => `${n > 0 ? '+' : ''}${fm(n)}`;
@@ -408,7 +421,7 @@ function PerfExtra({ account, trades, filtered, total, maxDd }) {
     const CT = { growth: { v: cumS.map(c => c / start * 100), k: 'line', f: v => `${v > 0 ? '+' : ''}${v.toFixed(1)}%`, t: 'Growth (% dari modal awal)' }, balance: { v: cumS.map(c => account.balance + c), k: 'line', f: v => `$${Math.round(v)}`, t: 'Balance / equity' }, profit: { v: cumS, k: 'line', f: v => `$${Math.round(v)}`, t: 'Profit kumulatif' }, daily: { v: dayKeys.map(k => dayMap[k]), k: 'bar', f: v => `$${Math.round(v)}`, t: 'P&L harian (WIB)' }, dd: { v: ddS, k: 'line', f: v => `$${Math.round(v)}`, t: 'Drawdown dari puncak' } }[ct];
     const allClosed = trades.filter(t => t.status === 'closed');
     const years = [...new Set([...allClosed.map(t => wib(t.date).year), nowW.year])].sort();
-    const mon = Array.from({ length: 12 }, (_, i) => { const xs = allClosed.filter(t => { const w = wib(t.date); return w.year === year && w.mi === i; }); return { i, count: xs.length, pnl: sumOf(xs, t => t.pnl), wins: xs.filter(t => t.pnl > 0).length }; });
+    const mon = Array.from({ length: 12 }, (_, i) => { const xs = allClosed.filter(t => { const w = wib(t.date); return w.year === year && w.mi === i; }); return { i, n: xs.length, pnl: sumOf(xs, t => t.pnl), wins: xs.filter(t => t.pnl > 0).length }; });
     const MN = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
     const ms = mon[mSel];
     const syms = [...new Set(sorted.map(t => t.symbol))].map(s => { const xs = sorted.filter(t => t.symbol === s); return { s, n: xs.length, pnl: sumOf(xs, t => t.pnl) }; }).sort((a, b) => b.n - a.n);
@@ -421,6 +434,56 @@ function PerfExtra({ account, trades, filtered, total, maxDd }) {
     const used = sess.filter(x => x.n);
     const best = used.length ? used.reduce((a, b) => b.pnl > a.pnl ? b : a) : null;
     const bestT = sorted.length ? Math.max(...sorted.map(t => t.pnl)) : 0, worstT = sorted.length ? Math.min(...sorted.map(t => t.pnl)) : 0;
+    const [calCur, setCalCur] = useState(new Date());
+    const [dnaOpen, setDnaOpen] = useState(true);
+    const cy = calCur.getFullYear(), cm = calCur.getMonth();
+    const cdays = new Date(cy, cm + 1, 0).getDate();
+    const coff = (new Date(cy, cm, 1).getDay() + 6) % 7;
+    const cinfo = trades.reduce((a, t) => { const k = dateOnly(t.date); const x = (a[k] || (a[k] = { pnl: 0, n: 0 })); x.pnl += t.status === 'closed' ? (Number(t.pnl) || 0) : 0; x.n += 1; return a; }, {});
+    const cmPnl = Object.keys(cinfo).filter(k => k.startsWith(`${cy}-${String(cm + 1).padStart(2, '0')}`)).reduce((a, k) => a + cinfo[k].pnl, 0);
+    const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+    const mMap = {};
+    sorted.forEach(t => { const m = wib(t.date).month; mMap[m] = (mMap[m] || 0) + (Number(t.pnl) || 0); });
+    const mKeys = Object.keys(mMap);
+    const mWin = mKeys.filter(k => mMap[k] > 0).length;
+    const dWin = dayKeys.filter(k => dayMap[k] > 0).length;
+    const dnaOK = sorted.length >= 3;
+    const dnaDD = maxDd / Math.max(account.balance, 1) * 100;
+    const rf = maxDd ? total / maxDd : (total > 0 ? 3 : 0);
+    const rsA = sorted.map(t => { const r = riskFor(t.entry, t.sl, t.lots, t.symbol); return r ? (Number(t.pnl) || 0) / r : null; }).filter(v => v !== null);
+    const avgLossAbs = losses.length ? gL / losses.length : 0;
+    const expR = rsA.length ? rsA.reduce((a, b) => a + b, 0) / rsA.length : (avgLossAbs && sorted.length ? (total / sorted.length) / avgLossAbs : 0);
+    const slPct = sorted.length ? sorted.filter(t => t.sl !== null && t.sl !== undefined && t.sl !== '').length / sorted.length * 100 : 0;
+    const lotsA = sorted.map(t => Number(t.lots) || 0);
+    const meanL = lotsA.length ? lotsA.reduce((a, b) => a + b, 0) / lotsA.length : 0;
+    const cvL = meanL ? Math.sqrt(lotsA.reduce((a, b) => a + (b - meanL) ** 2, 0) / lotsA.length) / meanL : 0;
+    let mart = 0, streak = 0, maxStreak = 0;
+    sorted.forEach((t, i) => { if (i > 0 && sorted[i - 1].pnl < 0 && (Number(t.lots) || 0) > (Number(sorted[i - 1].lots) || 0) * 1.5)
+        mart++; if (t.pnl < 0) {
+        streak++;
+        maxStreak = Math.max(maxStreak, streak);
+    }
+    else
+        streak = 0; });
+    const martFlag = mart >= 2;
+    const sKons = Math.round((mKeys.length ? mWin / mKeys.length * 100 : 0) * .5 + (dayKeys.length ? dWin / dayKeys.length * 100 : 0) * .5);
+    const sProf = Math.round(clamp(((pf === Infinity ? 3 : pf) - .5) / 2) * 100 * .6 + clamp((expR + .2) / .8) * 100 * .4);
+    const sRisk = Math.round(clamp(1 - dnaDD / 30) * 100 * .6 + clamp(rf / 3) * 100 * .4);
+    const sDisc = Math.round(slPct * .5 + clamp(1 - cvL) * 100 * .3 + (martFlag ? 0 : 100) * .2);
+    const sRes = Math.round(clamp(1 - (Math.max(maxStreak, 1) - 1) / 9) * 100 * .6 + clamp(rf / 3) * 100 * .4);
+    const band = v => v >= 75 ? 0 : v >= 50 ? 1 : 2;
+    const BL = [['Kuat', 'pos'], ['Cukup', 'mid'], ['Perlu perbaikan', 'neg']];
+    const dims = [
+        { name: 'Konsistensi', short: 'Konsistensi', score: sKons, meta: `${mWin}/${mKeys.length} bulan profit · ${dayKeys.length ? Math.round(dWin / dayKeys.length * 100) : 0}% hari profit`, desc: 'Seberapa teratur profit datang — dihitung dari persentase bulan dan hari yang berakhir profit.', tip: ['Konsistensi bagus — profit datang secara teratur. Pertahankan target harian yang realistis dan jangan memaksa trade di hari yang sudah profit.', 'Kejar keteraturan, bukan jackpot. Tetapkan target harian yang realistis dan berhenti setelah tercapai; satu hari rugi besar bisa menghapus akumulasi berhari-hari.', 'Hasil masih naik-turun. Kejar keteraturan, bukan jackpot; fokus pada setup berkualitas dan batasi jumlah trade per hari.'][band(sKons)] },
+        { name: 'Profitabilitas', short: 'Profit', score: sProf, meta: `Profit Factor ${pf === Infinity ? '∞' : pf.toFixed(2)} · ekspektasi ${expR > 0 ? '+' : ''}${expR.toFixed(2)}R/trade`, desc: 'Kualitas cuan — dari Profit Factor (total profit ÷ total rugi) dan ekspektasi rata-rata per trade.', tip: ['Profit Factor sehat. Jaga disiplin rasio risk:reward dan jangan menahan posisi rugi melewati batas.', 'Profit Factor cukup. Tingkatkan rasio risk:reward (minimal 1:1.5) dan potong posisi rugi lebih cepat.', 'Profit Factor rendah — rugi lebih besar dari untung. Perbaiki rasio risk:reward dan evaluasi setup yang paling sering gagal.'][band(sProf)] },
+        { name: 'Manajemen Risiko', short: 'Risiko', score: sRisk, meta: `Max drawdown ${dnaDD.toFixed(1)}% · recovery ${rf.toFixed(1)}×`, desc: 'Ketahanan modal — dari max drawdown (penurunan terdalam) dan recovery factor (profit ÷ drawdown).', tip: ['Drawdown terkendali. Pertahankan risiko kecil per trade agar kurva ekuitas tetap halus.', 'Drawdown mulai terasa. Turunkan risiko per trade ke 1–2% modal agar modal tak cepat tergerus.', `Drawdown ${dnaDD.toFixed(1)}% tergolong dalam. Kecilkan risiko per trade ke 1–2% modal saja agar kurva ekuitas lebih halus dan modal tak cepat tergerus saat rentetan rugi.`][band(sRisk)] },
+        { name: 'Disiplin', short: 'Disiplin', score: sDisc, meta: `Lot ${cvL < .25 ? 'Stabil' : 'Agresif'} · SL dipakai di ${slPct.toFixed(0)}% trade${martFlag ? ' · terdeteksi martingale' : ''}`, desc: 'Kepatuhan pada aturan — dari kestabilan ukuran lot dan pemakaian Stop Loss.', tip: [slPct < 80 ? `Hanya ${slPct.toFixed(0)}% trade memakai Stop Loss — ini titik lemah terbesar. Pasang SL di SETIAP posisi supaya satu trade tak pernah bisa menghabiskan akun.` : '', martFlag ? 'Hentikan pula kebiasaan menaikkan lot setelah rugi (martingale); tetapkan lot yang tetap.' : (cvL >= .25 ? 'Ukuran lot masih berubah-ubah; tetapkan lot yang tetap.' : '')].filter(Boolean).join(' ') || 'Disiplin sudah baik — pertahankan lot yang stabil dan SL di setiap posisi.' },
+        { name: 'Ketahanan', short: 'Ketahanan', score: sRes, meta: `Rugi beruntun maks ${maxStreak}× · recovery ${rf.toFixed(1)}×`, desc: 'Kemampuan bangkit dari tekanan — dari rentetan rugi beruntun terpanjang dan recovery factor.', tip: ['Sangat tahan banting. Rentetan rugi pendek dan cepat pulih — pertahankan dengan SL dan risiko per trade yang kecil.', 'Cukup tahan banting. Rentetan rugi terkendali — jaga agar tetap begitu dengan SL dan risiko per trade yang kecil.', `Rentetan rugi sampai ${maxStreak}× terlalu panjang. Berhenti sejenak setelah 3 rugi beruntun dan kecilkan lot sampai performa pulih.`][band(sRes)] }
+    ];
+    const overall = Math.round(dims.reduce((a, d) => a + d.score, 0) / 5);
+    const grade = overall >= 85 ? 'A' : overall >= 70 ? 'B' : overall >= 55 ? 'C' : overall >= 40 ? 'D' : 'E';
+    const strong = dims.reduce((a, b) => b.score > a.score ? b : a), weak = dims.reduce((a, b) => b.score < a.score ? b : a);
+    const RC = 95, rp = (i, v) => { const a = -Math.PI / 2 + i * 2 * Math.PI / 5; return [130 + Math.cos(a) * RC * v / 100, 130 + Math.sin(a) * RC * v / 100]; };
     const bar = (w, pos) => React.createElement("div", { className: "pe-bar" },
         React.createElement("i", { style: { width: `${Math.max(2, w)}%`, background: pos ? '#34d399' : '#ff6b81' } }));
     return React.createElement("div", { className: "pe" },
@@ -457,6 +520,29 @@ function PerfExtra({ account, trades, filtered, total, maxDd }) {
                 React.createElement("b", null,
                     w ? '-' : '+',
                     fm(h.amount))); }))),
+        React.createElement("div", { className: "pe-card" },
+            React.createElement("div", { className: "pe-head" },
+                React.createElement("h3", null, "Kalender"),
+                React.createElement("b", { className: tone(cmPnl) }, sg(cmPnl))),
+            React.createElement("div", { className: "cal-nav" },
+                React.createElement("button", { className: "icon-btn", onClick: () => setCalCur(new Date(cy, cm - 1, 1)) },
+                    React.createElement(ChevronLeft, { size: 16 })),
+                React.createElement("strong", null, calCur.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })),
+                React.createElement("button", { className: "icon-btn", onClick: () => setCalCur(new Date(cy, cm + 1, 1)) },
+                    React.createElement(ChevronRight, { size: 16 }))),
+            React.createElement("div", { className: "cal-week" }, ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(x => React.createElement("span", { key: x }, x))),
+            React.createElement("div", { className: "cal-grid" },
+                Array.from({ length: coff }, (_, i) => React.createElement("div", { className: "cal-cell empty", key: 'e' + i })),
+                Array.from({ length: cdays }, (_, i) => { const d = i + 1; const iso = `${cy}-${String(cm + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`; const v = cinfo[iso]; return React.createElement("button", { key: iso, className: `cal-cell ${v ? (v.pnl > 0 ? 'win' : v.pnl < 0 ? 'loss' : 'flat') : ''}`, onClick: () => v && onSelectDate && onSelectDate(iso) },
+                    React.createElement("span", { className: "cal-day" }, d),
+                    v && React.createElement(React.Fragment, null,
+                        React.createElement("b", null,
+                            v.pnl > 0 ? '+' : '',
+                            Math.round(v.pnl * 100) / 100),
+                        React.createElement("small", null,
+                            v.n,
+                            " posisi"))); })),
+            React.createElement("p", { className: "pe-note" }, "Ketuk tanggal yang punya posisi untuk membuka jurnal hari itu.")),
         React.createElement("div", { className: "pe-card" },
             React.createElement("div", { className: "pe-head" },
                 React.createElement("h3", null, "Monthly gain"),
@@ -571,9 +657,63 @@ function PerfExtra({ account, trades, filtered, total, maxDd }) {
                             x.n,
                             " posisi"),
                         React.createElement("b", { className: tone(x.pnl) }, sg(x.pnl)))),
-                bar(Math.abs(x.pnl) / maxD * 100, x.pnl >= 0))) : React.createElement("p", { className: "pe-empty" }, "Belum ada data.")));
+                bar(Math.abs(x.pnl) / maxD * 100, x.pnl >= 0))) : React.createElement("p", { className: "pe-empty" }, "Belum ada data.")),
+        React.createElement("div", { className: "dna-title" },
+            React.createElement("h2", null, "Trader DNA"),
+            React.createElement("small", { className: "pe-sub2" }, "Rapor karakter trading berbasis data")),
+        React.createElement("div", { className: "pe-card dna" },
+            React.createElement("div", { className: "pe-head" },
+                React.createElement("h3", { className: "dna-sh" },
+                    React.createElement(Activity, { size: 18 }),
+                    " Skor Keseluruhan"),
+                dnaOK && React.createElement("span", { className: `dna-grade g${grade}` },
+                    "Grade ",
+                    grade,
+                    " \u00B7 ",
+                    overall)),
+            !dnaOK ? React.createElement("p", { className: "pe-empty" }, "Butuh minimal 3 trade closed pada periode ini untuk membaca karakter trading.") : React.createElement(React.Fragment, null,
+                React.createElement("div", { className: "dna-top" },
+                    React.createElement("svg", { viewBox: "0 0 260 260", className: "dna-radar" },
+                        [25, 50, 75, 100].map(l => React.createElement("polygon", { key: l, points: dims.map((_, i) => rp(i, l).join(',')).join(' '), fill: "none", stroke: "#233252", strokeWidth: "1" })),
+                        dims.map((_, i) => { const p = rp(i, 100); return React.createElement("line", { key: i, x1: "130", y1: "130", x2: p[0], y2: p[1], stroke: "#233252", strokeWidth: "1" }); }),
+                        React.createElement("polygon", { points: dims.map((d, i) => rp(i, d.score).join(',')).join(' '), fill: "#7c5cff", fillOpacity: ".28", stroke: "#9b82ff", strokeWidth: "2.5" }),
+                        dims.map((d, i) => { const p = rp(i, 122); return React.createElement("text", { key: d.name, x: p[0], y: p[1] + 4, textAnchor: "middle", fontSize: "11", fill: "#9aa7c5" }, d.short); })),
+                    React.createElement("div", { className: "dna-bars" }, dims.map(d => React.createElement("div", { key: d.name },
+                        React.createElement("div", { className: "dna-barhead" },
+                            React.createElement("span", null, d.name),
+                            React.createElement("b", null, d.score)),
+                        React.createElement("div", { className: "pe-bar" },
+                            React.createElement("i", { style: { width: `${Math.max(2, d.score)}%`, background: '#7c5cff' } })))))),
+                React.createElement("p", { className: "dna-quick" },
+                    React.createElement("b", null, "Baca cepat:"),
+                    " Terkuat di ",
+                    React.createElement("b", null, strong.name),
+                    ", paling bisa ditingkatkan di ",
+                    React.createElement("b", null, weak.name),
+                    ". Grade ",
+                    grade,
+                    " artinya skor rata-rata ",
+                    overall,
+                    "/100 dari 5 dimensi di bawah."),
+                React.createElement("button", { className: "pe-link", onClick: () => setDnaOpen(!dnaOpen) },
+                    dnaOpen ? '▾' : '▸',
+                    " Rincian skor & cara menjadi lebih baik"),
+                dnaOpen && dims.map(d => { const b = BL[band(d.score)]; return React.createElement("div", { key: d.name, className: `dna-item ${b[1]}` },
+                    React.createElement("div", { className: "dna-ihead" },
+                        React.createElement("strong", null, d.name),
+                        React.createElement("span", { className: `dna-badge ${b[1]}` },
+                            d.score,
+                            "/100 \u00B7 ",
+                            b[0]),
+                        React.createElement("small", { className: "dna-meta" }, d.meta)),
+                    React.createElement("p", null, d.desc),
+                    React.createElement("p", null,
+                        React.createElement("b", { className: `dna-tip ${b[1]}` }, "Cara tingkatkan:"),
+                        " ",
+                        d.tip)); }),
+                React.createElement("p", { className: "pe-note" }, "Skor edukatif berbasis data (profit factor, drawdown, konsistensi, lot & SL). Bukan rekomendasi investasi."))));
 }
-function Performance({ onWallet, account, trades, period, setPeriod, customStart, customEnd, setCustomStart, setCustomEnd }) {
+function Performance({ onSelectDate, onWallet, account, trades, period, setPeriod, customStart, customEnd, setCustomStart, setCustomEnd }) {
     const [rangeOpen, setRangeOpen] = useState(false);
     const [draft, setDraft] = useState({ s: '', e: '' });
     const filtered = trades.filter(t => t.status === 'closed' && withinPeriod(t.date, period, customStart, customEnd));
@@ -653,7 +793,7 @@ function Performance({ onWallet, account, trades, period, setPeriod, customStart
             React.createElement(Metric, { label: "Winners / Losers", value: `${wins.length} / ${losses.length}`, icon: React.createElement(Activity, null), accent: "purple" }),
             React.createElement(Metric, { tone: maxDd > 0 ? 'neg' : '', label: "Max drawdown", value: money(maxDd, account.currency), sub: `${pct(-maxDd, account.balance)} from peak`, icon: React.createElement(TrendingDown, null), accent: "orange" }),
             React.createElement(Metric, { tone: hwm > 0 ? 'pos' : '', label: "High water mark", value: `${hwm > 0 ? '+' : ''}${money(hwm, account.currency)}`, sub: `${pct(hwm, account.balance)} profit tertinggi`, icon: React.createElement(TrendingUp, null), accent: "green" })),
-        React.createElement(PerfExtra, { account: account, trades: trades, filtered: filtered, total: total, maxDd: maxDd }),
+        React.createElement(PerfExtra, { account: account, trades: trades, filtered: filtered, total: total, maxDd: maxDd, onSelectDate: onSelectDate }),
         rangeOpen && React.createElement("div", { className: "modal-backdrop center" },
             React.createElement("div", { className: "range-dialog" },
                 React.createElement("h3", null, "Custom Date Range"),

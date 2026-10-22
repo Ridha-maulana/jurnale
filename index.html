@@ -569,8 +569,7 @@ function PerfExtra({ account, trades, filtered, total, maxDd, onSelectDate, view
     const RC = 95, rp = (i, v) => { const a = -Math.PI / 2 + i * 2 * Math.PI / 5; return [130 + Math.cos(a) * RC * v / 100, 130 + Math.sin(a) * RC * v / 100]; };
     const MNF = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
     const vmKey = `${cy}-${String(cm + 1).padStart(2, '0')}`;
-    const weeks = [0, 1, 2, 3, 4].map(k => { const a = k * 7 + 1, b = Math.min(k * 7 + 7, cdays); if (a > cdays)
-        return null; const xs = allClosed.filter(t => { const d = dateOnly(t.date); const dd = Number(d.slice(8, 10)); return d.startsWith(vmKey) && dd >= a && dd <= b; }); return { name: `Minggu ke-${k + 1}`, hrs: a === b ? `${a} ${MN[cm]}` : `${a}–${b} ${MN[cm]}`, n: xs.length, wr: xs.length ? xs.filter(t => t.pnl > 0).length / xs.length * 100 : 0, pnl: sumOf(xs, t => t.pnl) }; }).filter(Boolean);
+    const weeks = Array.from({ length: Math.floor((cdays - 1 + coff) / 7) + 1 }, (_, k) => { const a = Math.max(1, k * 7 - coff + 1), b = Math.min(cdays, k * 7 - coff + 7); const xs = allClosed.filter(t => { const d = dateOnly(t.date); const dd = Number(d.slice(8, 10)); return d.startsWith(vmKey) && dd >= a && dd <= b; }); return { name: `Minggu ke-${k + 1}`, hrs: a === b ? `${a} ${MN[cm]}` : `${a}–${b} ${MN[cm]}`, n: xs.length, wr: xs.length ? xs.filter(t => t.pnl > 0).length / xs.length * 100 : 0, pnl: sumOf(xs, t => t.pnl) }; }).filter(Boolean);
     const maxW = Math.max(1, ...weeks.map(x => Math.abs(x.pnl)));
     const wUsed = weeks.filter(x => x.n);
     const bestW = wUsed.length ? wUsed.reduce((a, b) => b.pnl > a.pnl ? b : a) : null;
@@ -709,7 +708,7 @@ function PerfExtra({ account, trades, filtered, total, maxDd, onSelectDate, view
                             "% WR"),
                         React.createElement("b", { className: tone(w.pnl) }, sg(w.pnl)))),
                 bar(w.n ? Math.abs(w.pnl) / maxW * 100 : 0, w.pnl >= 0))),
-            React.createElement("p", { className: "pe-note" }, "Minggu dihitung per blok tanggal: 1\u20137, 8\u201314, 15\u201321, 22\u201328, dan 29\u2013akhir bulan. Mengikuti bulan yang dipilih di Monthly gain atau Kalender.")),
+            React.createElement("p", { className: "pe-note" }, "Minggu mengikuti baris pada Kalender (Senin\u2013Minggu), jadi tanggalnya berubah tiap bulan. Minggu pertama dan terakhir bisa lebih pendek karena bulan tidak selalu dimulai di hari Senin.")),
         React.createElement("div", { className: "pe-card" },
             React.createElement("h3", null,
                 "Performa per hari ",

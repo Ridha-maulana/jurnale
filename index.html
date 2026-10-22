@@ -513,9 +513,6 @@ function PerfExtra({ account, trades, filtered, total, maxDd, onSelectDate, view
     const ms = mon[mSel];
     const syms = [...new Set(sorted.map(t => t.symbol))].map(s => { const xs = sorted.filter(t => t.symbol === s); return { s, n: xs.length, pnl: sumOf(xs, t => t.pnl) }; }).sort((a, b) => b.n - a.n);
     const maxSym = Math.max(1, ...syms.map(x => Math.abs(x.pnl)));
-    const WD = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const wdays = WD.map(d => { const xs = sorted.filter(t => wib(t.date).wd === d); return { d, n: xs.length, pnl: sumOf(xs, t => t.pnl) }; }).filter(x => x.n);
-    const maxD = Math.max(1, ...wdays.map(x => Math.abs(x.pnl)));
     const sess = SESSIONS.map(s => { const xs = sorted.filter(t => s.test(wib(t.date).hour)); return { ...s, n: xs.length, wr: xs.length ? xs.filter(t => t.pnl > 0).length / xs.length * 100 : 0, pnl: sumOf(xs, t => t.pnl) }; });
     const maxS = Math.max(1, ...sess.map(x => Math.abs(x.pnl)));
     const used = sess.filter(x => x.n);
@@ -570,6 +567,24 @@ function PerfExtra({ account, trades, filtered, total, maxDd, onSelectDate, view
     const grade = overall >= 85 ? 'A' : overall >= 70 ? 'B' : overall >= 55 ? 'C' : overall >= 40 ? 'D' : 'E';
     const strong = dims.reduce((a, b) => b.score > a.score ? b : a), weak = dims.reduce((a, b) => b.score < a.score ? b : a);
     const RC = 95, rp = (i, v) => { const a = -Math.PI / 2 + i * 2 * Math.PI / 5; return [130 + Math.cos(a) * RC * v / 100, 130 + Math.sin(a) * RC * v / 100]; };
+    const MNF = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    const vmKey = `${cy}-${String(cm + 1).padStart(2, '0')}`;
+    const weeks = [0, 1, 2, 3, 4].map(k => { const a = k * 7 + 1, b = Math.min(k * 7 + 7, cdays); if (a > cdays)
+        return null; const xs = allClosed.filter(t => { const d = dateOnly(t.date); const dd = Number(d.slice(8, 10)); return d.startsWith(vmKey) && dd >= a && dd <= b; }); return { name: `Minggu ke-${k + 1}`, hrs: a === b ? `${a} ${MN[cm]}` : `${a}–${b} ${MN[cm]}`, n: xs.length, wr: xs.length ? xs.filter(t => t.pnl > 0).length / xs.length * 100 : 0, pnl: sumOf(xs, t => t.pnl) }; }).filter(Boolean);
+    const maxW = Math.max(1, ...weeks.map(x => Math.abs(x.pnl)));
+    const wUsed = weeks.filter(x => x.n);
+    const bestW = wUsed.length ? wUsed.reduce((a, b) => b.pnl > a.pnl ? b : a) : null;
+    const DN = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+    const vmTrades = allClosed.filter(t => dateOnly(t.date).startsWith(vmKey));
+    const gd = t => new Date(dateOnly(t.date) + 'T12:00').getDay();
+    const mkDay = (name, test) => { const xs = vmTrades.filter(t => test(gd(t))); return { name, n: xs.length, days: new Set(xs.map(t => dateOnly(t.date))).size, wr: xs.length ? xs.filter(t => t.pnl > 0).length / xs.length * 100 : 0, pnl: sumOf(xs, t => t.pnl) }; };
+    const dayRows = [1, 2, 3, 4, 5].map((g, i) => mkDay(DN[i], x => x === g));
+    const wkend = mkDay('Akhir pekan (Sab–Min)', x => x === 0 || x === 6);
+    if (wkend.n)
+        dayRows.push(wkend);
+    const maxDy = Math.max(1, ...dayRows.map(x => Math.abs(x.pnl)));
+    const dUsed = dayRows.filter(x => x.n);
+    const bestDy = dUsed.length ? dUsed.reduce((p, q) => q.pnl > p.pnl ? q : p) : null;
     const bar = (w, pos) => React.createElement("div", { className: "pe-bar" },
         React.createElement("i", { style: { width: `${Math.max(2, w)}%`, background: pos ? '#34d399' : '#ff6b81' } }));
     return React.createElement("div", { className: "pe" },
@@ -613,29 +628,6 @@ function PerfExtra({ account, trades, filtered, total, maxDd, onSelectDate, view
                     fm(h.amount))); }))),
         React.createElement("div", { className: "pe-card" },
             React.createElement("div", { className: "pe-head" },
-                React.createElement("h3", null, "Kalender"),
-                React.createElement("b", { className: tone(cmPnl) }, sg(cmPnl))),
-            React.createElement("div", { className: "cal-nav" },
-                React.createElement("button", { className: "icon-btn", onClick: () => { const d = new Date(cy, cm - 1, 1); onPickMonth(d.getFullYear(), d.getMonth()); } },
-                    React.createElement(ChevronLeft, { size: 16 })),
-                React.createElement("strong", null, new Date(cy, cm, 1).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })),
-                React.createElement("button", { className: "icon-btn", onClick: () => { const d = new Date(cy, cm + 1, 1); onPickMonth(d.getFullYear(), d.getMonth()); } },
-                    React.createElement(ChevronRight, { size: 16 }))),
-            React.createElement("div", { className: "cal-week" }, ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(x => React.createElement("span", { key: x }, x))),
-            React.createElement("div", { className: "cal-grid" },
-                Array.from({ length: coff }, (_, i) => React.createElement("div", { className: "cal-cell empty", key: 'e' + i })),
-                Array.from({ length: cdays }, (_, i) => { const d = i + 1; const iso = `${cy}-${String(cm + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`; const v = cinfo[iso]; return React.createElement("button", { key: iso, className: `cal-cell ${v ? (v.pnl > 0 ? 'win' : v.pnl < 0 ? 'loss' : 'flat') : ''}`, onClick: () => v && onSelectDate && onSelectDate(iso) },
-                    React.createElement("span", { className: "cal-day" }, d),
-                    v && React.createElement(React.Fragment, null,
-                        React.createElement("b", null,
-                            v.pnl > 0 ? '+' : '',
-                            Math.round(v.pnl * 100) / 100),
-                        React.createElement("small", null,
-                            v.n,
-                            " posisi"))); })),
-            React.createElement("p", { className: "pe-note" }, "Ketuk tanggal yang punya posisi untuk membuka jurnal hari itu.")),
-        React.createElement("div", { className: "pe-card" },
-            React.createElement("div", { className: "pe-head" },
                 React.createElement("h3", null, "Monthly gain"),
                 React.createElement("div", { className: "pe-years" },
                     React.createElement("button", { onClick: () => onPickMonth(year - 1, mSel) }, "\u2039"),
@@ -661,6 +653,97 @@ function PerfExtra({ account, trades, filtered, total, maxDd, onSelectDate, view
                     React.createElement("b", null,
                         ms.n ? Math.round(ms.wins / ms.n * 100) : 0,
                         "%")))),
+        React.createElement("div", { className: "pe-card" },
+            React.createElement("div", { className: "pe-head" },
+                React.createElement("h3", null, "Kalender"),
+                React.createElement("b", { className: tone(cmPnl) }, sg(cmPnl))),
+            React.createElement("div", { className: "cal-nav" },
+                React.createElement("button", { className: "icon-btn", onClick: () => { const d = new Date(cy, cm - 1, 1); onPickMonth(d.getFullYear(), d.getMonth()); } },
+                    React.createElement(ChevronLeft, { size: 16 })),
+                React.createElement("strong", null, new Date(cy, cm, 1).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })),
+                React.createElement("button", { className: "icon-btn", onClick: () => { const d = new Date(cy, cm + 1, 1); onPickMonth(d.getFullYear(), d.getMonth()); } },
+                    React.createElement(ChevronRight, { size: 16 }))),
+            React.createElement("div", { className: "cal-week" }, ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(x => React.createElement("span", { key: x }, x))),
+            React.createElement("div", { className: "cal-grid" },
+                Array.from({ length: coff }, (_, i) => React.createElement("div", { className: "cal-cell empty", key: 'e' + i })),
+                Array.from({ length: cdays }, (_, i) => { const d = i + 1; const iso = `${cy}-${String(cm + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`; const v = cinfo[iso]; return React.createElement("button", { key: iso, className: `cal-cell ${v ? (v.pnl > 0 ? 'win' : v.pnl < 0 ? 'loss' : 'flat') : ''}`, onClick: () => v && onSelectDate && onSelectDate(iso) },
+                    React.createElement("span", { className: "cal-day" }, d),
+                    v && React.createElement(React.Fragment, null,
+                        React.createElement("b", null,
+                            v.pnl > 0 ? '+' : '',
+                            Math.round(v.pnl * 100) / 100),
+                        React.createElement("small", null,
+                            v.n,
+                            " posisi"))); })),
+            React.createElement("p", { className: "pe-note" }, "Ketuk tanggal yang punya posisi untuk membuka jurnal hari itu.")),
+        React.createElement("div", { className: "pe-card" },
+            React.createElement("h3", null,
+                "Performa per minggu ",
+                React.createElement("small", null,
+                    "(",
+                    MNF[cm],
+                    " ",
+                    cy,
+                    ")")),
+            bestW ? React.createElement("div", { className: "pe-best" },
+                "\uD83C\uDFC6 Minggu terbaik: ",
+                React.createElement("b", null, bestW.name),
+                " \u00B7 ",
+                React.createElement("span", { className: tone(bestW.pnl) }, sg(bestW.pnl)),
+                " \u00B7 WR ",
+                bestW.wr.toFixed(0),
+                "% \u00B7 ",
+                bestW.n,
+                " posisi") : React.createElement("p", { className: "pe-empty" }, "Belum ada trade closed di bulan ini."),
+            weeks.map(w => React.createElement("div", { className: `pe-row ${bestW && w.name === bestW.name ? 'best' : ''}`, key: w.name },
+                React.createElement("div", { className: "pe-rowhead" },
+                    React.createElement("div", null,
+                        React.createElement("strong", null, w.name),
+                        React.createElement("small", null, w.hrs)),
+                    React.createElement("div", { className: "pe-meta" },
+                        React.createElement("span", null,
+                            w.n,
+                            " posisi"),
+                        React.createElement("span", null,
+                            w.n ? w.wr.toFixed(0) : 0,
+                            "% WR"),
+                        React.createElement("b", { className: tone(w.pnl) }, sg(w.pnl)))),
+                bar(w.n ? Math.abs(w.pnl) / maxW * 100 : 0, w.pnl >= 0))),
+            React.createElement("p", { className: "pe-note" }, "Minggu dihitung per blok tanggal: 1\u20137, 8\u201314, 15\u201321, 22\u201328, dan 29\u2013akhir bulan. Mengikuti bulan yang dipilih di Monthly gain atau Kalender.")),
+        React.createElement("div", { className: "pe-card" },
+            React.createElement("h3", null,
+                "Performa per hari ",
+                React.createElement("small", null,
+                    "(",
+                    MNF[cm],
+                    " ",
+                    cy,
+                    ")")),
+            bestDy ? React.createElement("div", { className: "pe-best" },
+                "\uD83C\uDFC6 Hari terbaik: ",
+                React.createElement("b", null, bestDy.name),
+                " \u00B7 ",
+                React.createElement("span", { className: tone(bestDy.pnl) }, sg(bestDy.pnl)),
+                " \u00B7 WR ",
+                bestDy.wr.toFixed(0),
+                "% \u00B7 ",
+                bestDy.n,
+                " posisi") : React.createElement("p", { className: "pe-empty" }, "Belum ada trade closed di bulan ini."),
+            dayRows.map(d => React.createElement("div", { className: `pe-row ${bestDy && d.name === bestDy.name ? 'best' : ''}`, key: d.name },
+                React.createElement("div", { className: "pe-rowhead" },
+                    React.createElement("div", null,
+                        React.createElement("strong", null, d.name),
+                        React.createElement("small", null, d.days ? `${d.days} hari trading` : 'Belum ada trade')),
+                    React.createElement("div", { className: "pe-meta" },
+                        React.createElement("span", null,
+                            d.n,
+                            " posisi"),
+                        React.createElement("span", null,
+                            d.n ? d.wr.toFixed(0) : 0,
+                            "% WR"),
+                        React.createElement("b", { className: tone(d.pnl) }, sg(d.pnl)))),
+                bar(d.n ? Math.abs(d.pnl) / maxDy * 100 : 0, d.pnl >= 0))),
+            React.createElement("p", { className: "pe-note" }, "Hari dihitung dari tanggal entry trade pada bulan yang dipilih (Senin\u2013Jumat). Mengikuti bulan di Monthly gain dan Kalender. Trade akhir pekan, jika ada, tampil di baris terpisah.")),
         React.createElement("div", { className: "pe-card" },
             React.createElement("h3", null,
                 "Performa per sesi ",
@@ -739,19 +822,6 @@ function PerfExtra({ account, trades, filtered, total, maxDd, onSelectDate, view
                         ")")),
                 React.createElement("div", { className: "pe-bar" },
                     React.createElement("i", { style: { width: `${x.n / sorted.length * 100}%`, background: '#6b8dff' } })))) : React.createElement("p", { className: "pe-empty" }, "Belum ada data.")),
-        React.createElement("div", { className: "pe-card" },
-            React.createElement("h3", null,
-                "Performa per hari ",
-                React.createElement("small", null, "(WIB)")),
-            wdays.length ? wdays.map(x => React.createElement("div", { className: "pe-row", key: x.d },
-                React.createElement("div", { className: "pe-rowhead" },
-                    React.createElement("strong", null, x.d),
-                    React.createElement("div", { className: "pe-meta" },
-                        React.createElement("span", null,
-                            x.n,
-                            " posisi"),
-                        React.createElement("b", { className: tone(x.pnl) }, sg(x.pnl)))),
-                bar(Math.abs(x.pnl) / maxD * 100, x.pnl >= 0))) : React.createElement("p", { className: "pe-empty" }, "Belum ada data.")),
         React.createElement("div", { className: "dna-title" },
             React.createElement("h2", null, "Trader DNA"),
             React.createElement("small", { className: "pe-sub2" }, "Rapor karakter trading berbasis data")),

@@ -158,6 +158,13 @@
 /* Animasi dimatikan total */
 *,*:before,*:after{animation:none!important;transition:none!important}
 .cc-line{stroke-dasharray:none!important;stroke-dashoffset:0!important}.cc-pulse{display:none!important}
+
+.adv{margin-top:6px}.adv-title h2{margin:0;font-size:22px}.adv-title small{display:block;color:#7d8bab;margin:4px 0 12px;font-size:13px}
+.adv-card{background:#10182b;border:1px solid #202d47;border-radius:20px;overflow:hidden;margin-bottom:14px}
+.adv-prof{padding:18px 18px 16px;border-bottom:1px solid #1c2a47}.adv-profhead{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;margin-bottom:10px}.adv-profhead span{color:#8a94ab}.adv-profhead b.pos{color:#34d399}.adv-profhead b.neg{color:#ff6b81}
+.adv-bar{height:12px;border-radius:8px;background:rgba(255,107,129,.28);overflow:hidden}.adv-bar i{display:block;height:100%;background:#34d399;border-radius:8px}
+.adv-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid #1c2a47;font-size:14px}.adv-row span{color:#8a94ab}.adv-row b{font-weight:800;color:#eef2ff;text-align:right}.adv-row b.pos{color:#34d399}.adv-row b.neg{color:#ff6b81}
+.adv-note{padding:12px 18px 16px;margin:0}
 </style>
 </head>
 <body>
@@ -482,7 +489,7 @@ function DateField({ value, onChange, withTime, min }) {
                     React.createElement("button", { type: "button", onClick: () => setOpen(false) }, "Batal"),
                     React.createElement("button", { type: "button", onClick: done }, "Setel")))), document.body));
 }
-function useCountUp(target, ms = 500) { if (true) return target; const [v, setV] = useState(0); const from = useRef(0); useEffect(() => { const reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; if (reduce) {
+function useCountUp(target, ms = 900) { if (true) return target; const [v, setV] = useState(0); const from = useRef(0); useEffect(() => { const reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; if (reduce) {
     setV(target);
     from.current = target;
     return;
@@ -673,6 +680,135 @@ function drawShareImage(d) {
     t('Dibuat dengan Edge Journal', 540, 1820, 26, '#5f6d8c', 500, 'center');
     return c;
 }
+function pipSizeOf(sym) { const u = String(sym || '').toUpperCase(); if (u.includes('XAU'))
+    return .1; if (u.includes('XAG'))
+    return .01; if (u.includes('JPY'))
+    return .01; if (u.includes('BTC') || u.includes('ETH') || u.includes('NAS') || u.includes('US30') || u.includes('SPX'))
+    return 1; return .0001; }
+function pipsOf(t) { if (t.exit === null || t.exit === undefined || t.exit === '')
+    return 0; const d = t.side === 'Long' ? Number(t.exit) - Number(t.entry) : Number(t.entry) - Number(t.exit); return d / pipSizeOf(t.symbol); }
+function fmtHold(min) { if (!isFinite(min) || min <= 0)
+    return '—'; if (min < 60)
+    return `${Math.round(min)} mnt`; if (min < 1440) {
+    const h = Math.floor(min / 60), m = Math.round(min % 60);
+    return m ? `${h} j ${m} mnt` : `${h} j`;
+} const d = Math.floor(min / 1440), h = Math.round((min % 1440) / 60); return h ? `${d} hr ${h} j` : `${d} hr`; }
+function AdvancedStats({ account, filtered, total, maxDd, hwm, view }) {
+    const cur = account.currency;
+    const fm = n => money(n, cur);
+    const sg = n => `${n > 0 ? '+' : ''}${fm(n)}`;
+    const tn = n => n > 0 ? 'pos' : n < 0 ? 'neg' : '';
+    const pf1 = (n, d = 1) => `${n > 0 ? '+' : ''}${n.toFixed(d)}`;
+    const MSx = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const cl = filtered.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+    const n = cl.length;
+    const wins = cl.filter(t => t.pnl > 0), losses = cl.filter(t => t.pnl < 0);
+    const gW = sumOf(wins, t => t.pnl), gL = Math.abs(sumOf(losses, t => t.pnl));
+    const wr = n ? wins.length / n * 100 : 0;
+    const pf = gL ? gW / gL : (gW ? Infinity : 0);
+    const hist = account.capitalHistory || [];
+    const depSum = sumOf(hist.filter(h => h.type !== 'withdraw'), h => h.amount), wdSum = sumOf(hist.filter(h => h.type === 'withdraw'), h => h.amount);
+    const start = Math.max((account.balance || 0) - depSum + wdSum, 1);
+    const rrs = cl.map(t => { const r = riskFor(t.entry, t.sl, t.lots, t.symbol), w = rewardFor(t.entry, t.tp, t.lots, t.symbol); return r && w ? w / r : null; }).filter(Boolean);
+    const avgRR = rrs.length ? rrs.reduce((a, b) => a + b, 0) / rrs.length : null;
+    const rsA = cl.map(t => { const r = riskFor(t.entry, t.sl, t.lots, t.symbol); return r ? (Number(t.pnl) || 0) / r : null; }).filter(v => v !== null);
+    const aL = losses.length ? gL / losses.length : 0;
+    const expR = rsA.length ? rsA.reduce((a, b) => a + b, 0) / rsA.length : (aL && n ? (total / n) / aL : 0);
+    const rf = maxDd ? total / maxDd : (total > 0 ? Infinity : 0);
+    const avgW = wins.length ? gW / wins.length : 0, avgL = losses.length ? -gL / losses.length : 0;
+    const longs = cl.filter(t => t.side === 'Long'), shorts = cl.filter(t => t.side === 'Short');
+    const wrOf = a => a.length ? Math.round(a.filter(t => t.pnl > 0).length / a.length * 100) : 0;
+    const dm = {};
+    cl.forEach(t => { const k = dateOnly(t.date); dm[k] = (dm[k] || 0) + (Number(t.pnl) || 0); });
+    const dk = Object.keys(dm);
+    const bestK = dk.length ? dk.reduce((a, b) => dm[b] > dm[a] ? b : a) : null;
+    const days = dk.length;
+    let ws = 0, ls = 0, mw = 0, ml = 0;
+    cl.forEach(t => { if (t.pnl > 0) {
+        ws++;
+        ls = 0;
+        mw = Math.max(mw, ws);
+    }
+    else if (t.pnl < 0) {
+        ls++;
+        ws = 0;
+        ml = Math.max(ml, ls);
+    }
+    else {
+        ws = 0;
+        ls = 0;
+    } });
+    const vk = `${view.y}-${String(view.m + 1).padStart(2, '0')}`;
+    const inM = cl.filter(t => dateOnly(t.date).startsWith(vk));
+    const mPnl = sumOf(inM, t => t.pnl);
+    const pips = cl.map(pipsOf);
+    const totalPips = pips.reduce((a, b) => a + b, 0);
+    const mPips = sumOf(inM, pipsOf);
+    const tpP = wins.map(pipsOf), slP = losses.map(t => Math.abs(pipsOf(t)));
+    const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
+    const mx = a => a.length ? Math.max(...a) : 0;
+    const holds = cl.filter(t => t.closeDate && t.date).map(t => (new Date(t.closeDate) - new Date(t.date)) / 60000).filter(v => isFinite(v) && v >= 0);
+    const avgHold = holds.length ? holds.reduce((a, b) => a + b, 0) / holds.length : 0;
+    const style = avgHold <= 0 ? '' : avgHold < 60 ? 'Scalping' : avgHold < 1440 ? 'Day trading' : avgHold < 10080 ? 'Swing' : 'Position';
+    const rows = [
+        ['Total Trades', String(n), ''],
+        ['Profit Factor', pf === Infinity ? '∞' : pf.toFixed(2), n ? (pf >= 1 ? 'pos' : 'neg') : ''],
+        ['Avg. R:R', avgRR ? avgRR.toFixed(1) : '—', ''],
+        ['Expectancy', `${pf1(expR, 2)}R · ${sg(n ? total / n : 0)}`, tn(expR)],
+        ['Recovery Factor', rf === Infinity ? '∞' : rf.toFixed(1), n ? (rf >= 1 ? 'pos' : 'neg') : ''],
+        ['Avg. Win / Loss', `${sg(avgW)} / ${sg(avgL)}`, ''],
+        ['Gross Profit', sg(gW), gW ? 'pos' : ''],
+        ['Gross Loss', gL ? `-${fm(gL)}` : fm(0), gL ? 'neg' : ''],
+        ['Longs Won', `${wrOf(longs)}% (${longs.length})`, ''],
+        ['Shorts Won', `${wrOf(shorts)}% (${shorts.length})`, ''],
+        ['Best Day', bestK ? `${sg(dm[bestK])} · ${pf1(dm[bestK] / (account.balance || 1) * 100, 2)}%` : '—', bestK ? tn(dm[bestK]) : ''],
+        ['Avg Daily Gain', days ? `${sg(total / days)} · ${pf1(total / days / (account.balance || 1) * 100, 2)}%` : '—', days ? tn(total) : ''],
+        ['Max Win Streak', `${mw}×`, mw ? 'pos' : ''],
+        ['Max Loss Streak', `${ml}×`, ml ? 'neg' : ''],
+        ['Avg Hold', holds.length ? `${fmtHold(avgHold)} · ${style}` : '—', ''],
+        ['Perolehan Pips', `${pf1(totalPips)} pips`, tn(totalPips)],
+        [`Profit Pips ${MSx[view.m]}`, `${pf1(mPips)} pips`, tn(mPips)],
+        ['Average TP Pips', `${avg(tpP).toFixed(1)} pips`, tpP.length ? 'pos' : ''],
+        ['Average SL Pips', `${avg(slP).toFixed(1)} pips`, slP.length ? 'neg' : ''],
+        ['Max TP Pips', `${mx(tpP).toFixed(1)} pips`, tpP.length ? 'pos' : ''],
+        ['Max SL Pips', `${mx(slP).toFixed(1)} pips`, slP.length ? 'neg' : ''],
+        ['Profit', sg(total), tn(total)],
+        ['Gain', `${pf1(total / start * 100, 2)}%`, tn(total)],
+        ['Abs. Gain', `${pf1(total / (start + depSum) * 100, 2)}%`, tn(total)],
+        [`Gain ${MSx[view.m]}`, `${pf1(mPnl / start * 100, 2)}% · ${sg(mPnl)}`, tn(mPnl)],
+        ['Max Drawdown', maxDd ? `-${fm(maxDd)} · -${(maxDd / (account.balance || 1) * 100).toFixed(2)}%` : fm(0), maxDd ? 'neg' : ''],
+        ['High Water Mark', `${hwm > 0 ? '+' : ''}${fm(hwm)}`, hwm > 0 ? 'pos' : ''],
+        ['Balance', fm(account.balance), ''],
+        ['Equity', fm(account.balance + total), tn(total)],
+        ['Deposits', fm(depSum), depSum ? 'pos' : ''],
+        ['Withdrawals', fm(wdSum), wdSum ? 'neg' : '']
+    ];
+    return React.createElement("div", { className: "adv" },
+        React.createElement("div", { className: "adv-title" },
+            React.createElement("h2", null, "Advanced Statistics"),
+            React.createElement("small", null,
+                "Statistik lengkap akun \u00B7 ",
+                n,
+                " trade")),
+        React.createElement("div", { className: "adv-card" },
+            React.createElement("div", { className: "adv-prof" },
+                React.createElement("div", { className: "adv-profhead" },
+                    React.createElement("b", { className: n ? (wr >= 50 ? 'pos' : 'neg') : '' },
+                        "Profitability \u00B7 ",
+                        wr.toFixed(0),
+                        "% menang"),
+                    React.createElement("span", null,
+                        wins.length,
+                        " W / ",
+                        losses.length,
+                        " L")),
+                React.createElement("div", { className: "adv-bar" },
+                    React.createElement("i", { style: { width: `${wr}%` } }))),
+            rows.map(([l, v, t]) => React.createElement("div", { className: "adv-row", key: l },
+                React.createElement("span", null, l),
+                React.createElement("b", { className: t }, v))),
+            React.createElement("p", { className: "pe-note adv-note" }, "Pips dihitung dari harga entry ke harga close: XAUUSD 1 pip = 0.10 poin harga, pair JPY 0.01, pair lain 0.0001, NAS100 dan BTCUSD 1 poin. Average/Max TP dari trade menang, SL dari trade kalah. Avg Hold dari waktu buka sampai close. Bulan mengikuti pilihan di Kalender dan Monthly gain.")));
+}
 const WIB_FMT = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jakarta', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', weekday: 'short' });
 function wib(d) { const p = {}; WIB_FMT.formatToParts(new Date(d)).forEach(x => { p[x.type] = x.value; }); return { day: `${p.year}-${p.month}-${p.day}`, month: `${p.year}-${p.month}`, year: p.year, mi: Number(p.month) - 1, hour: Number(p.hour), wd: p.weekday }; }
 const SESSIONS = [{ name: 'Asia', hrs: '06.00–15.00', test: h => h >= 6 && h < 15 }, { name: 'London', hrs: '15.00–20.00', test: h => h >= 15 && h < 20 }, { name: 'London–New York', hrs: '20.00–24.00', test: h => h >= 20 }, { name: 'New York', hrs: '00.00–04.00', test: h => h < 4 }, { name: 'Sepi', hrs: '04.00–06.00', test: h => h >= 4 && h < 6 }];
@@ -822,19 +958,6 @@ function PerfExtra({ account, trades, filtered, total, maxDd, onSelectDate, view
     const bar = (w, pos) => React.createElement("div", { className: "pe-bar" },
         React.createElement("i", { style: { width: `${Math.max(2, w)}%`, background: pos ? '#34d399' : '#ff6b81' } }));
     return React.createElement("div", { className: "pe" },
-        rangeText && React.createElement("div", { className: "pe-banner" },
-            React.createElement("span", null,
-                "Menampilkan: ",
-                React.createElement("b", null, rangeText)),
-            React.createElement("button", { onClick: onResetAll }, "Semua waktu")),
-        React.createElement("div", { className: "section-row" },
-            React.createElement("h2", null, "Ringkasan"),
-            React.createElement("span", { className: "muted" },
-                filtered.length,
-                " trade \u00B7 WIB")),
-        React.createElement("div", { className: "pe-tiles" }, tiles.map(([l, v, t]) => React.createElement("div", { className: "pe-tile", key: l },
-            React.createElement("span", null, l),
-            React.createElement("b", { className: t }, v)))),
         React.createElement("div", { className: "pe-card" },
             React.createElement("div", { className: "pe-tabs" }, [['growth', 'Growth'], ['balance', 'Balance'], ['profit', 'Profit'], ['daily', 'Daily P&L'], ['dd', 'Drawdown']].map(([k, l]) => React.createElement("button", { key: k, className: ct === k ? 'on' : '', onClick: () => setCt(k) }, l))),
             React.createElement("p", { className: "pe-sub" }, CT.t),
@@ -1237,22 +1360,15 @@ function Performance({ onSelectDate, onWallet, account, trades, period, setPerio
                         const n = new Date();
                         setView({ y: n.getFullYear(), m: n.getMonth() });
                     } } }))),
-        period === 'Custom date range' && customStart && customEnd && React.createElement("div", { className: "range-caption left" },
-            fmtLong(customStart),
-            " - ",
-            fmtLong(customEnd)),
-        React.createElement("div", { className: "section-row" },
-            React.createElement("h2", null, "Key metrics"),
-            React.createElement("span", { className: "muted" },
-                filtered.length,
-                " closed trades")),
-        React.createElement("div", { className: "metrics-grid" },
-            React.createElement(Metric, { tone: filtered.length ? (winRate >= 50 ? 'pos' : 'neg') : '', label: "Win rate", value: `${winRate}%`, icon: React.createElement(Target, null), accent: "blue" }),
-            React.createElement(Metric, { tone: avgWin > 0 ? 'pos' : '', label: "Average winner", value: money(avgWin, account.currency), sub: `${pct(avgWin, account.balance)} of balance`, icon: React.createElement(ArrowUpRight, null), accent: "green" }),
-            React.createElement(Metric, { tone: avgLoss < 0 ? 'neg' : '', label: "Average loser", value: money(avgLoss, account.currency), sub: `${pct(avgLoss, account.balance)} of balance`, icon: React.createElement(ArrowDownRight, null), accent: "red" }),
-            React.createElement(Metric, { label: "Winners / Losers", value: `${wins.length} / ${losses.length}`, icon: React.createElement(Activity, null), accent: "purple" }),
-            React.createElement(Metric, { tone: maxDd > 0 ? 'neg' : '', label: "Max drawdown", value: money(maxDd, account.currency), sub: `${pct(-maxDd, account.balance)} from peak`, icon: React.createElement(TrendingDown, null), accent: "orange" }),
-            React.createElement(Metric, { tone: hwm > 0 ? 'pos' : '', label: "High water mark", value: `${hwm > 0 ? '+' : ''}${money(hwm, account.currency)}`, sub: `${pct(hwm, account.balance)} profit tertinggi`, icon: React.createElement(TrendingUp, null), accent: "green" })),
+        period === 'Custom date range' && customStart && customEnd && React.createElement("div", { className: "pe-banner" },
+            React.createElement("span", null,
+                "Menampilkan: ",
+                React.createElement("b", null,
+                    fmtLong(customStart),
+                    " \u2013 ",
+                    fmtLong(customEnd))),
+            React.createElement("button", { onClick: () => setPeriod('All time') }, "Semua waktu")),
+        React.createElement(AdvancedStats, { account: account, filtered: filtered, total: total, maxDd: maxDd, hwm: hwm, view: view }),
         React.createElement(PerfExtra, { account: account, trades: trades, filtered: filtered, total: total, maxDd: maxDd, onSelectDate: onSelectDate, view: view, onPickMonth: pickMonth, onResetAll: () => setPeriod('All time'), rangeText: period === 'Custom date range' && customStart && customEnd ? `${fmtLong(customStart)} – ${fmtLong(customEnd)}` : '' }),
         shareOpen && ReactDOM.createPortal(React.createElement("div", { className: "modal-backdrop center top", onClick: e => { if (e.target === e.currentTarget) {
                 setShareOpen(false);

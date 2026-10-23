@@ -114,6 +114,50 @@
 
 .as-head{display:flex;justify-content:space-between;align-items:center;gap:8px}.as-edit{background:none;border:1px solid #405a9a;color:#9db6ff;border-radius:8px;padding:5px 11px;font-size:11px;font-weight:700}
 .as-edit-row input{width:100%;background:#0c1322;border:1px solid #405a9a;color:#fff;border-radius:9px;padding:10px 12px;font-size:14px;margin:8px 0}.as-actions{display:flex;gap:10px;justify-content:flex-end}.as-actions button{background:none;border:0;color:#8aa8ff;font-weight:700;font-size:13px;padding:7px 10px}.as-actions .ok{background:linear-gradient(135deg,#6185ff,#4564e8);color:#fff;border-radius:9px;padding:8px 16px}
+
+.hero-card.combo{display:block;padding:18px}.combo-top{display:flex;justify-content:space-between;gap:12px}
+.combo-stats{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px;margin:16px 0 4px;padding-top:14px;border-top:1px solid #243457}.combo-stats span{display:block;font-size:11px;color:#8a97b8}.combo-stats b{display:block;font-size:17px;margin-top:4px;color:#eef2ff}.combo-stats b.positive{color:#34d399}.combo-stats b.negative{color:#ff6b81}
+.combo-chart{width:100%;height:120px;display:block;margin-top:10px}.combo-legend{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:11.5px;color:#9aa7c5;margin-top:8px}.combo-legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}.combo-legend b{color:#eef2ff}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes drawline{to{stroke-dashoffset:0}}
+@keyframes growx{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes growy{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes pulseRing{0%{transform:scale(.8);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+.hero-card.combo,.pe-card,.pe-tile,.pe-banner,.dna-item{animation:fadeUp .55s cubic-bezier(.2,.7,.2,1) backwards}
+.pe-tile:nth-child(2){animation-delay:.04s}.pe-tile:nth-child(3){animation-delay:.08s}.pe-tile:nth-child(4){animation-delay:.12s}.pe-tile:nth-child(5){animation-delay:.16s}.pe-tile:nth-child(6){animation-delay:.2s}.pe-tile:nth-child(n+7){animation-delay:.24s}
+.pe>.pe-card:nth-of-type(2){animation-delay:.08s}.pe>.pe-card:nth-of-type(3){animation-delay:.14s}.pe>.pe-card:nth-of-type(4){animation-delay:.2s}.pe>.pe-card:nth-of-type(n+5){animation-delay:.26s}
+.cc-line{stroke-dasharray:1;stroke-dashoffset:1;animation:drawline 1.5s cubic-bezier(.4,0,.2,1) .15s forwards}.cc-area{animation:fadeIn 1.2s ease .5s both}
+.cc-pulse{transform-box:fill-box;transform-origin:center;animation:pulseRing 2s ease-out infinite}.cc-dot{transition:all .15s}
+.combo-chart{touch-action:pan-y;cursor:crosshair;height:auto;overflow:visible}
+.pe-bar i{transform-origin:left;animation:growx .9s cubic-bezier(.2,.8,.2,1) both}.pe-months i{transform-origin:bottom;animation:growy .8s cubic-bezier(.2,.8,.2,1) both}.pe-donut circle{transition:stroke-dasharray .8s ease}
+.pe-card .cal-cell,.tsel,.dfield,.pe-tabs button,.icon-btn,.week-head,.cal-cell{transition:transform .15s ease,background .2s ease,border-color .2s ease}
+.cal-cell:active,.tsel:active,.dfield:active,.pe-tabs button:active,.icon-btn:active{transform:scale(.95)}
+.pe-tabs button.on{box-shadow:0 0 0 1px #4a68c8,0 6px 18px #1d2c5766}
+.modal-backdrop{animation:fadeIn .2s ease both}.tsel-sheet,.dp-sheet,.range-dialog,.modal{animation:fadeUp .28s cubic-bezier(.2,.7,.2,1) backwards}
+.main-content>section{animation:fadeIn .3s ease backwards}
+.range-caption.left{text-align:left;padding:0 2px 10px}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.cc-line{stroke-dashoffset:0}}
+
+.section-row{gap:16px}.section-row h2{flex:none}
+.share-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;background:#1a2a55;border:1px solid #405a9a;color:#cfe0ff;border-radius:12px;padding:11px;font-size:13px;font-weight:700}
+.share-sheet{width:min(380px,100%);max-height:92vh;overflow:auto;background:#10182a;border:1px solid #293757;border-radius:20px;padding:14px 16px 10px;box-shadow:0 24px 70px #000d;animation:fadeUp .28s cubic-bezier(.2,.7,.2,1) backwards}
+.share-img{display:block;width:auto;max-width:100%;max-height:54vh;margin:6px auto 12px;border-radius:14px;border:1px solid #293757}
+.share-opt{display:flex;gap:10px;align-items:center;font-size:12.5px;color:#aab6cf;margin:4px 0 8px}.share-opt input{width:18px;height:18px;accent-color:#5d83ff}
+.share-actions .primary{background:linear-gradient(135deg,#6185ff,#4564e8);color:#fff;border-radius:10px;padding:9px 18px}
+
+/* Mode hemat animasi: lebih ringan untuk HP */
+.cc-pulse{animation:none!important;display:none}
+.hero-card.combo,.pe-card,.pe-tile,.pe-banner,.dna-item{animation-duration:.3s!important;animation-delay:0s!important}
+.pe-tile:nth-child(n),.pe>.pe-card:nth-of-type(n){animation-delay:0s!important}
+.cc-line{animation-duration:.9s!important;animation-delay:0s!important}.cc-area{animation-duration:.6s!important;animation-delay:.2s!important}
+.pe-bar i,.pe-months i{animation-duration:.5s!important}
+.main-content>section{animation:none!important}
+
+/* Animasi dimatikan total */
+*,*:before,*:after{animation:none!important;transition:none!important}
+.cc-line{stroke-dasharray:none!important;stroke-dashoffset:0!important}.cc-pulse{display:none!important}
 </style>
 </head>
 <body>
@@ -438,6 +482,197 @@ function DateField({ value, onChange, withTime, min }) {
                     React.createElement("button", { type: "button", onClick: () => setOpen(false) }, "Batal"),
                     React.createElement("button", { type: "button", onClick: done }, "Setel")))), document.body));
 }
+function useCountUp(target, ms = 500) { if (true) return target; const [v, setV] = useState(0); const from = useRef(0); useEffect(() => { const reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; if (reduce) {
+    setV(target);
+    from.current = target;
+    return;
+} const s0 = from.current, t0 = performance.now(); let raf; const step = now => { const p = Math.min(1, (now - t0) / ms); const e = 1 - Math.pow(1 - p, 3); const cur = s0 + (target - s0) * e; setV(cur); from.current = cur; if (p < 1)
+    raf = requestAnimationFrame(step); }; raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf); }, [target]); return v; }
+function smoothPath(P) { if (P.length < 2)
+    return ''; let d = `M${P[0][0]},${P[0][1]}`; for (let i = 0; i < P.length - 1; i++) {
+    const p0 = P[i - 1] || P[i], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2] || p2;
+    d += ` C${p1[0] + (p2[0] - p0[0]) / 6},${p1[1] + (p2[1] - p0[1]) / 6} ${p2[0] - (p3[0] - p1[0]) / 6},${p2[1] - (p3[1] - p1[1]) / 6} ${p2[0]},${p2[1]}`;
+} return d; }
+function ComboChart({ vals, labels, col, fmt }) {
+    const [hv, setHv] = useState(null);
+    const W = 500, H = 176, T = 18, B = 30, L = 6, R = 6;
+    const n = vals.length;
+    const lo = Math.min(...vals), hi = Math.max(...vals), sp = (hi - lo) || 1;
+    const x = i => L + (n < 2 ? (W - L - R) / 2 : i / (n - 1) * (W - L - R));
+    const y = v => T + (hi - v) / sp * (H - T - B);
+    const P = vals.map((v, i) => [x(i), y(v)]);
+    const d = n > 1 ? smoothPath(P) : `M${L},${y(0)} L${W - R},${y(0)}`;
+    const base = H - B;
+    const gid = col === '#34d399' ? 'ccg' : 'ccr';
+    const ix = hv == null ? n - 1 : hv;
+    const move = e => { if (n < 2)
+        return; const r = e.currentTarget.getBoundingClientRect(); const px = (e.clientX - r.left) / r.width * W; setHv(Math.max(0, Math.min(n - 1, Math.round((px - L) / ((W - L - R) / (n - 1)))))); };
+    return React.createElement("svg", { viewBox: `0 0 ${W} ${H}`, className: "combo-chart", onPointerMove: move, onPointerDown: move, onPointerLeave: () => setHv(null), onPointerCancel: () => setHv(null) },
+        React.createElement("defs", null,
+            React.createElement("linearGradient", { id: gid, x1: "0", x2: "0", y1: "0", y2: "1" },
+                React.createElement("stop", { offset: "0", stopColor: col, stopOpacity: ".4" }),
+                React.createElement("stop", { offset: "1", stopColor: col, stopOpacity: "0" })),
+            React.createElement("filter", { id: "ccglow", x: "-10%", y: "-30%", width: "120%", height: "160%" },
+                React.createElement("feGaussianBlur", { stdDeviation: "3.5" }))),
+        [.25, .5, .75].map(f => React.createElement("line", { key: f, x1: L, x2: W - R, y1: T + (H - T - B) * f, y2: T + (H - T - B) * f, stroke: "#2a3a60", strokeWidth: "1", strokeDasharray: "3 6" })),
+        React.createElement("line", { x1: L, x2: W - R, y1: base, y2: base, stroke: "#33466f", strokeWidth: "1" }),
+        n > 1 && React.createElement("path", { d: `${d} L${x(n - 1)},${base} L${x(0)},${base} Z`, fill: `url(#${gid})`, className: "cc-area" }),
+        React.createElement("path", { d: d, pathLength: "1", className: "cc-line", fill: "none", stroke: col, strokeWidth: "9", opacity: ".28", filter: "url(#ccglow)" }),
+        React.createElement("path", { d: d, pathLength: "1", className: "cc-line", fill: "none", stroke: col, strokeWidth: "3.2", strokeLinecap: "round", strokeLinejoin: "round" }),
+        n > 1 && hv != null && React.createElement("line", { x1: x(ix), x2: x(ix), y1: T, y2: base, stroke: "#fff", strokeOpacity: ".28", strokeDasharray: "3 3" }),
+        n > 1 && hv == null && React.createElement("circle", { cx: x(ix), cy: y(vals[ix]), r: "8", fill: col, className: "cc-pulse" }),
+        n > 1 && React.createElement("circle", { cx: x(ix), cy: y(vals[ix]), r: "5", fill: col, stroke: "#0f172a", strokeWidth: "2.5", className: "cc-dot" }),
+        n > 1 && React.createElement("text", { x: Math.min(Math.max(x(ix), 78), W - 78), y: "12", textAnchor: "middle", fontSize: "12", fontWeight: "700", fill: hv != null ? '#eef2ff' : col },
+            hv != null ? `${labels[ix]} · ` : '',
+            fmt(vals[ix])),
+        n < 2 && React.createElement("text", { x: W / 2, y: H / 2, textAnchor: "middle", fontSize: "12", fill: "#7d8bab" }, "Belum ada trade pada periode ini"),
+        React.createElement("text", { x: L, y: H - 9, fontSize: "11", fill: "#7d8bab" }, labels[0]),
+        n > 1 && React.createElement("text", { x: W - R, y: H - 9, textAnchor: "end", fontSize: "11", fill: "#7d8bab" }, labels[n - 1]));
+}
+function drawShareImage(d) {
+    const W = 1080, H = 1920, c = document.createElement('canvas');
+    c.width = W;
+    c.height = H;
+    const x = c.getContext('2d');
+    const F = 'Manrope, system-ui, sans-serif', M = "'DM Mono', ui-monospace, monospace", G = '#34d399', R = '#ff6b81', col = d.total >= 0 ? G : R;
+    const rr = (a, b, w, h, r) => { x.beginPath(); x.moveTo(a + r, b); x.arcTo(a + w, b, a + w, b + h, r); x.arcTo(a + w, b + h, a, b + h, r); x.arcTo(a, b + h, a, b, r); x.arcTo(a, b, a + w, b, r); x.closePath(); };
+    const t = (str, px, py, size, color, weight, align, font) => { x.font = `${weight || 500} ${size}px ${font || F}`; x.fillStyle = color; x.textAlign = align || 'left'; x.fillText(str, px, py); };
+    let g = x.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, '#0a1126');
+    g.addColorStop(1, '#162244');
+    x.fillStyle = g;
+    x.fillRect(0, 0, W, H);
+    g = x.createRadialGradient(W - 120, 260, 20, W - 120, 260, 520);
+    g.addColorStop(0, 'rgba(93,131,255,.28)');
+    g.addColorStop(1, 'rgba(93,131,255,0)');
+    x.fillStyle = g;
+    x.fillRect(0, 0, W, H);
+    g = x.createRadialGradient(100, H - 200, 20, 100, H - 200, 520);
+    g.addColorStop(0, 'rgba(52,211,153,.14)');
+    g.addColorStop(1, 'rgba(52,211,153,0)');
+    x.fillStyle = g;
+    x.fillRect(0, 0, W, H);
+    // header
+    g = x.createLinearGradient(80, 110, 176, 206);
+    g.addColorStop(0, '#6a8dff');
+    g.addColorStop(1, '#4565e7');
+    x.fillStyle = g;
+    rr(80, 110, 96, 96, 26);
+    x.fill();
+    x.fillStyle = '#fff';
+    x.beginPath();
+    [[132, 128], [108, 164], [128, 164], [124, 188], [148, 150], [128, 150]].forEach((p, i) => i ? x.lineTo(p[0], p[1]) : x.moveTo(p[0], p[1]));
+    x.closePath();
+    x.fill();
+    t('EDGE JOURNAL', 204, 152, 40, '#eef2ff', 800);
+    t('TRADING LOGBOOK', 204, 192, 22, '#7d8bab', 500, 'left', M);
+    // card
+    const cx = 60, cy = 270, cw = 960, ch = 1290;
+    g = x.createLinearGradient(cx, cy, cx + cw, cy + ch);
+    g.addColorStop(0, '#18284b');
+    g.addColorStop(1, '#111a33');
+    x.fillStyle = g;
+    rr(cx, cy, cw, ch, 56);
+    x.fill();
+    x.strokeStyle = '#2a3a60';
+    x.lineWidth = 3;
+    x.stroke();
+    t('TOTAL P&L', 110, 360, 26, '#7d8bab', 500, 'left', M);
+    t('ACTIVE ACCOUNT', 970, 360, 24, '#7d8bab', 500, 'right', M);
+    t(d.account, 970, 420, 46, '#fff', 800, 'right');
+    const big = d.hide ? `${d.growthPct >= 0 ? '+' : ''}${d.growthPct.toFixed(2)}%` : `${d.total >= 0 ? '+' : ''}${d.fmt(d.total)}`;
+    t(big, 110, 520, 126, col, 800);
+    t(`${d.total >= 0 ? '↗' : '↘'}  ${d.hide ? 'Pertumbuhan' : `${d.growthPct >= 0 ? '+' : ''}${d.growthPct.toFixed(2)}%`} in selected period`, 110, 590, 32, col, 500);
+    x.strokeStyle = '#2a3a60';
+    x.lineWidth = 2;
+    x.beginPath();
+    x.moveTo(110, 640);
+    x.lineTo(970, 640);
+    x.stroke();
+    const mask = '••••••';
+    const stats = [['Saldo awal', d.hide ? mask : d.fmt(d.start), '#fff'], ['Sekarang', d.hide ? mask : d.fmt(d.now), col], ['Pertumbuhan', `${d.growthPct >= 0 ? '+' : ''}${d.growthPct.toFixed(2)}%`, col], ['Hari aktif', String(d.days), '#fff']];
+    stats.forEach((s0, i) => { const px = i % 2 ? 570 : 110, py = i < 2 ? 710 : 870; t(s0[0], px, py, 28, '#8a97b8', 500); t(s0[1], px, py + 68, 58, s0[2], 800); });
+    // chart
+    const L = 110, Rr = 970, T = 1060, B = 1370, vals = d.vals, n = vals.length;
+    const lo = Math.min(...vals), hi = Math.max(...vals), sp = (hi - lo) || 1;
+    const px = i => n < 2 ? (L + Rr) / 2 : L + i / (n - 1) * (Rr - L), py = v => T + (hi - v) / sp * (B - T);
+    x.setLineDash([8, 14]);
+    x.strokeStyle = '#2a3a60';
+    x.lineWidth = 2;
+    [.25, .5, .75].forEach(f => { x.beginPath(); x.moveTo(L, T + (B - T) * f); x.lineTo(Rr, T + (B - T) * f); x.stroke(); });
+    x.setLineDash([]);
+    x.strokeStyle = '#33466f';
+    x.beginPath();
+    x.moveTo(L, B);
+    x.lineTo(Rr, B);
+    x.stroke();
+    if (n > 1) {
+        const P = vals.map((v, i) => [px(i), py(v)]);
+        const path = () => { x.beginPath(); x.moveTo(P[0][0], P[0][1]); for (let i = 0; i < P.length - 1; i++) {
+            const p0 = P[i - 1] || P[i], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2] || p2;
+            x.bezierCurveTo(p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6, p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6, p2[0], p2[1]);
+        } };
+        path();
+        x.lineTo(px(n - 1), B);
+        x.lineTo(px(0), B);
+        x.closePath();
+        g = x.createLinearGradient(0, T, 0, B);
+        g.addColorStop(0, d.total >= 0 ? 'rgba(52,211,153,.42)' : 'rgba(255,107,129,.42)');
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        x.fillStyle = g;
+        x.fill();
+        x.save();
+        x.shadowColor = col;
+        x.shadowBlur = 26;
+        x.strokeStyle = col;
+        x.lineWidth = 9;
+        x.lineCap = 'round';
+        x.lineJoin = 'round';
+        path();
+        x.stroke();
+        x.restore();
+        const ex = px(n - 1), ey = py(vals[n - 1]);
+        x.fillStyle = col == G ? 'rgba(52,211,153,.25)' : 'rgba(255,107,129,.25)';
+        x.beginPath();
+        x.arc(ex, ey, 24, 0, Math.PI * 2);
+        x.fill();
+        x.fillStyle = col;
+        x.strokeStyle = '#0f172a';
+        x.lineWidth = 6;
+        x.beginPath();
+        x.arc(ex, ey, 12, 0, Math.PI * 2);
+        x.fill();
+        x.stroke();
+        const endTxt = d.hide ? `${vals[n - 1] >= 0 ? '+' : ''}${(d.growthPct).toFixed(2)}%` : `${vals[n - 1] > 0 ? '+' : ''}${d.fmt(vals[n - 1])}`;
+        t(endTxt, Math.min(ex, Rr - 10), Math.max(ey - 34, T - 14), 30, col, 800, 'right');
+    }
+    else {
+        t('Belum ada trade pada periode ini', 540, (T + B) / 2, 30, '#7d8bab', 500, 'center');
+    }
+    t(d.labels[0], L, B + 52, 26, '#7d8bab', 500);
+    if (n > 1)
+        t(d.labels[n - 1], Rr, B + 52, 26, '#7d8bab', 500, 'right');
+    // legend
+    x.fillStyle = G;
+    x.beginPath();
+    x.arc(120, 1456, 13, 0, Math.PI * 2);
+    x.fill();
+    t('Bulan terbaik:', 148, 1466, 30, '#9aa7c5', 500);
+    x.font = '800 30px ' + F;
+    const bw = x.measureText('Bulan terbaik: ').width;
+    t(d.best, 148 + bw + 6, 1466, 30, '#eef2ff', 800);
+    x.fillStyle = R;
+    x.beginPath();
+    x.arc(120, 1516, 13, 0, Math.PI * 2);
+    x.fill();
+    t('Drawdown terdalam:', 148, 1526, 30, '#9aa7c5', 500);
+    x.font = '500 30px ' + F;
+    const dw = x.measureText('Drawdown terdalam: ').width;
+    t(d.dd, 148 + dw + 6, 1526, 30, '#eef2ff', 800);
+    t(d.periodText, 540, 1650, 34, '#cbd8ff', 700, 'center');
+    t('Dibuat dengan Edge Journal', 540, 1820, 26, '#5f6d8c', 500, 'center');
+    return c;
+}
 const WIB_FMT = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jakarta', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', weekday: 'short' });
 function wib(d) { const p = {}; WIB_FMT.formatToParts(new Date(d)).forEach(x => { p[x.type] = x.value; }); return { day: `${p.year}-${p.month}-${p.day}`, month: `${p.year}-${p.month}`, year: p.year, mi: Number(p.month) - 1, hour: Number(p.hour), wd: p.weekday }; }
 const SESSIONS = [{ name: 'Asia', hrs: '06.00–15.00', test: h => h >= 6 && h < 15 }, { name: 'London', hrs: '15.00–20.00', test: h => h >= 15 && h < 20 }, { name: 'London–New York', hrs: '20.00–24.00', test: h => h >= 20 }, { name: 'New York', hrs: '00.00–04.00', test: h => h < 4 }, { name: 'Sepi', hrs: '04.00–06.00', test: h => h >= 4 && h < 6 }];
@@ -463,7 +698,7 @@ function MiniChart({ vals, labels, kind, fmt }) {
         React.createElement("line", { x1: L, x2: W - R, y1: y(0), y2: y(0), stroke: "#3a4d78", strokeWidth: "1.5" }),
         kind === 'bar' ? vals.map((v, i) => React.createElement("rect", { key: i, x: x(i) - bw / 2, y: Math.min(y(v), y(0)), width: bw, height: Math.max(2, Math.abs(y(v) - y(0))), rx: "3", fill: v >= 0 ? '#34d399' : '#ff6b81' })) : React.createElement(React.Fragment, null,
             n > 1 && React.createElement("polygon", { points: `${x(0)},${y(0)} ${line} ${x(n - 1)},${y(0)}`, fill: col, opacity: ".14" }),
-            React.createElement("polyline", { points: line, fill: "none", stroke: col, strokeWidth: "3", strokeLinejoin: "round", strokeLinecap: "round" }),
+            React.createElement("polyline", { points: line, pathLength: "1", className: "cc-line", fill: "none", stroke: col, strokeWidth: "3", strokeLinejoin: "round", strokeLinecap: "round" }),
             React.createElement("circle", { cx: x(n - 1), cy: y(vals[n - 1]), r: "5", fill: col })),
         [0, Math.floor((n - 1) / 2), n - 1].filter((v, i, a) => a.indexOf(v) === i).map(i => React.createElement("text", { key: i, x: x(i), y: H - 8, textAnchor: "middle", fontSize: "11", fill: "#7d8bab" }, labels[i])));
 }
@@ -603,7 +838,7 @@ function PerfExtra({ account, trades, filtered, total, maxDd, onSelectDate, view
         React.createElement("div", { className: "pe-card" },
             React.createElement("div", { className: "pe-tabs" }, [['growth', 'Growth'], ['balance', 'Balance'], ['profit', 'Profit'], ['daily', 'Daily P&L'], ['dd', 'Drawdown']].map(([k, l]) => React.createElement("button", { key: k, className: ct === k ? 'on' : '', onClick: () => setCt(k) }, l))),
             React.createElement("p", { className: "pe-sub" }, CT.t),
-            React.createElement(MiniChart, { vals: CT.v, labels: lab, kind: CT.k, fmt: CT.f }),
+            React.createElement(MiniChart, { key: ct, vals: CT.v, labels: lab, kind: CT.k, fmt: CT.f }),
             React.createElement("div", { className: "pe-cap" },
                 React.createElement("span", null,
                     React.createElement("i", { className: "dot g" }),
@@ -878,6 +1113,10 @@ function PerfExtra({ account, trades, filtered, total, maxDd, onSelectDate, view
 }
 function Performance({ onSelectDate, onWallet, account, trades, period, setPeriod, customStart, customEnd, setCustomStart, setCustomEnd }) {
     const [rangeOpen, setRangeOpen] = useState(false);
+    const [shareOpen, setShareOpen] = useState(false);
+    const [shareHide, setShareHide] = useState(false);
+    const [shareUrl, setShareUrl] = useState('');
+    const shareBlob = useRef(null);
     const [draft, setDraft] = useState({ s: '', e: '' });
     const [view, setView] = useState(() => { const n = new Date(); return { y: n.getFullYear(), m: n.getMonth() }; });
     const pickMonth = (y, m) => { const p2 = n => String(n).padStart(2, '0'); setView({ y, m }); setCustomStart(`${y}-${p2(m + 1)}-01`); setCustomEnd(`${y}-${p2(m + 1)}-${p2(new Date(y, m + 1, 0).getDate())}`); setPeriod('Custom date range'); };
@@ -898,28 +1137,97 @@ function Performance({ onSelectDate, onWallet, account, trades, period, setPerio
     const points = curve.length ? curve.map((p, i) => { const min = Math.min(...curve.map(x => x.equity), account.balance); const max = Math.max(...curve.map(x => x.equity), account.balance + 1); return `${curve.length === 1 ? 250 : (i / (curve.length - 1)) * 500},${145 - ((p.equity - min) / (max - min || 1)) * 125}`; }).join(' ') : '0,145 100,135 200,140 300,115 400,120 500,95';
     const bySymbol = SYMBOLS.map(symbol => { const xs = filtered.filter(t => t.symbol === symbol); return { symbol, count: xs.length, pnl: xs.reduce((a, t) => a + t.pnl, 0) }; }).filter(x => x.count);
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => { const xs = filtered.filter(t => new Date(t.date).toLocaleDateString('en-US', { weekday: 'short' }) === day); return { day, count: xs.length, wins: xs.filter(t => t.pnl > 0).length, losses: xs.filter(t => t.pnl < 0).length, pnl: xs.reduce((a, t) => a + (Number(t.pnl) || 0), 0) }; }).filter(x => x.count).sort((a, b) => b.pnl - a.pnl);
+    const cdH = account.capitalHistory || [];
+    const depS = cdH.filter(h => h.type !== 'withdraw').reduce((a, h) => a + (Number(h.amount) || 0), 0), wdS = cdH.filter(h => h.type === 'withdraw').reduce((a, h) => a + (Number(h.amount) || 0), 0);
+    const startBal = Math.max((account.balance || 0) - depS + wdS, 1);
+    const activeDays = new Set(filtered.map(t => dateOnly(t.date))).size;
+    const growthPct = total / startBal * 100;
+    const cs = filtered.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+    let cr = 0;
+    const cv = [0, ...cs.map(t => (cr += Number(t.pnl) || 0))];
+    const clo = Math.min(...cv), chi = Math.max(...cv), csp = (chi - clo) || 1;
+    const cn = cv.length;
+    const cpts = cv.map((v, i) => `${cn === 1 ? 0 : i / (cn - 1) * 500},${12 + (chi - v) / csp * 100}`);
+    const cy0 = 12 + (chi - 0) / csp * 100;
+    const ccol = cr >= 0 ? '#34d399' : '#ff6b81';
+    const mm = {};
+    cs.forEach(t => { const k = dateOnly(t.date).slice(0, 7); mm[k] = (mm[k] || 0) + (Number(t.pnl) || 0); });
+    const mKs = Object.keys(mm);
+    const bestMk = mKs.length ? mKs.reduce((a, b) => mm[b] > mm[a] ? b : a) : null;
+    const MS = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const aTotal = useCountUp(total), aNow = useCountUp(account.balance + total), aGrowth = useCountUp(growthPct);
+    const cLabels = ['Awal', ...cs.map(t => new Date(t.date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }))];
+    const sgn = v => v > 0.005 ? '+' : '';
+    const bestTxt = bestMk ? `${MS[Number(bestMk.slice(5, 7)) - 1]} ${mm[bestMk] >= 0 ? '+' : ''}${(mm[bestMk] / startBal * 100).toFixed(1)}%` : '—';
+    const ddTxt = maxDd ? `-${(maxDd / (account.balance || 1) * 100).toFixed(1)}%` : '0%';
+    const periodTxt = period === 'Custom date range' && customStart && customEnd ? `${fmtLong(customStart)} – ${fmtLong(customEnd)}` : period;
+    useEffect(() => { if (!shareOpen)
+        return; let dead = false, url = null; (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => { if (dead)
+        return; const cvn = drawShareImage({ account: account.name, total, growthPct, start: startBal, now: account.balance + total, days: activeDays, vals: cv, labels: cLabels, best: bestTxt, dd: ddTxt, periodText: periodTxt, hide: shareHide, fmt: v => money(v, account.currency) }); cvn.toBlob(b => { if (dead || !b)
+        return; shareBlob.current = b; url = URL.createObjectURL(b); setShareUrl(url); }, 'image/png'); }); return () => { dead = true; if (url)
+        URL.revokeObjectURL(url); }; }, [shareOpen, shareHide, total, growthPct, period, customStart, customEnd, account.name, cn, cr]);
+    const saveShare = () => { if (!shareUrl)
+        return; const a = document.createElement('a'); a.href = shareUrl; a.download = `edge-journal-${dateOnly(isoNow())}.png`; document.body.appendChild(a); a.click(); a.remove(); notify('Gambar disimpan. Buka WhatsApp atau Instagram lalu pilih dari galeri.'); };
+    const doShare = async () => { const b = shareBlob.current; if (!b)
+        return; const f = new File([b], 'edge-journal.png', { type: 'image/png' }); try {
+        if (navigator.canShare && navigator.canShare({ files: [f] })) {
+            await navigator.share({ files: [f], title: 'Edge Journal', text: 'Hasil trading saya' });
+            return;
+        }
+    }
+    catch (e) {
+        if (e && e.name === 'AbortError')
+            return;
+    } saveShare(); };
     return React.createElement("section", null,
         React.createElement(PageHeading, { eyebrow: "OVERVIEW / ACCOUNT", title: "Performance", description: `Analisis ${period.toLowerCase()} untuk ${account.name}.`, action: React.createElement("button", { className: "icon-btn", onClick: onWallet, "aria-label": "Deposit dan Withdraw" },
                 React.createElement(Wallet, { size: 18 })) }),
-        React.createElement("div", { className: "hero-card" },
-            React.createElement("div", null,
-                React.createElement("span", { className: "label" }, "TOTAL P&L"),
-                React.createElement("div", { className: total >= 0 ? 'hero-number positive' : 'hero-number negative' },
-                    total >= 0 ? '+' : '',
-                    money(total, account.currency)),
-                React.createElement("span", { className: `trend ${total >= 0 ? 'positive' : 'negative'}` },
-                    total >= 0 ? React.createElement(ArrowUpRight, { size: 15 }) : React.createElement(ArrowDownRight, { size: 15 }),
-                    " ",
-                    account.balance ? `${total >= 0 ? '+' : ''}${((total / account.balance) * 100).toFixed(2)}%` : '0.00%',
-                    " in selected period")),
-            React.createElement("div", { className: "hero-account" },
-                React.createElement("span", null, "ACTIVE ACCOUNT"),
-                React.createElement("strong", null, account.name),
-                React.createElement("small", null,
-                    "Equity ",
-                    money(account.balance + total, account.currency)))),
+        React.createElement("div", { className: "hero-card combo" },
+            React.createElement("div", { className: "combo-top" },
+                React.createElement("div", null,
+                    React.createElement("span", { className: "label" }, "TOTAL P&L"),
+                    React.createElement("div", { className: total >= 0 ? 'hero-number positive' : 'hero-number negative' },
+                        sgn(aTotal),
+                        money(aTotal, account.currency)),
+                    React.createElement("span", { className: `trend ${total >= 0 ? 'positive' : 'negative'}` },
+                        total >= 0 ? React.createElement(ArrowUpRight, { size: 15 }) : React.createElement(ArrowDownRight, { size: 15 }),
+                        " ",
+                        account.balance ? `${total >= 0 ? '+' : ''}${((total / account.balance) * 100).toFixed(2)}%` : '0.00%',
+                        " in selected period")),
+                React.createElement("div", { className: "hero-account" },
+                    React.createElement("span", null, "ACTIVE ACCOUNT"),
+                    React.createElement("strong", null, account.name))),
+            React.createElement("div", { className: "combo-stats" },
+                React.createElement("div", null,
+                    React.createElement("span", null, "Saldo awal"),
+                    React.createElement("b", null, money(startBal, account.currency))),
+                React.createElement("div", null,
+                    React.createElement("span", null, "Sekarang"),
+                    React.createElement("b", { className: total >= 0 ? 'positive' : 'negative' }, money(aNow, account.currency))),
+                React.createElement("div", null,
+                    React.createElement("span", null, "Pertumbuhan"),
+                    React.createElement("b", { className: growthPct >= 0 ? 'positive' : 'negative' },
+                        sgn(aGrowth),
+                        aGrowth.toFixed(2),
+                        "%")),
+                React.createElement("div", null,
+                    React.createElement("span", null, "Hari aktif"),
+                    React.createElement("b", null, activeDays))),
+            React.createElement(ComboChart, { key: `${cn}:${cr}`, vals: cv, labels: cLabels, col: ccol, fmt: v => `${v > 0 ? '+' : ''}${money(v, account.currency)}` }),
+            React.createElement("div", { className: "combo-legend" },
+                React.createElement("span", null,
+                    React.createElement("i", { style: { background: '#34d399' } }),
+                    "Bulan terbaik: ",
+                    React.createElement("b", null, bestMk ? `${MS[Number(bestMk.slice(5, 7)) - 1]} ${mm[bestMk] >= 0 ? '+' : ''}${(mm[bestMk] / startBal * 100).toFixed(1)}%` : '—')),
+                React.createElement("span", null,
+                    React.createElement("i", { style: { background: '#ff6b81' } }),
+                    "Drawdown terdalam: ",
+                    React.createElement("b", null, maxDd ? `-${(maxDd / (account.balance || 1) * 100).toFixed(1)}%` : '0%'))),
+            React.createElement("button", { type: "button", className: "share-btn", onClick: () => setShareOpen(true) },
+                React.createElement(Share2, { size: 15 }),
+                " Bagikan ke story")),
         React.createElement("div", { className: "section-row" },
-            React.createElement("h2", null, "Equity curve"),
+            React.createElement("h2", null, "Periode"),
             React.createElement("div", { className: "period-controls" },
                 React.createElement(TSelect, { title: "Periode", value: period, options: ['All time', 'Year-to-date', 'Weekly', 'Monthly', 'Custom date range'], onChange: v => { setPeriod(v); if (v === 'Custom date range') {
                         setDraft({ s: customStart || '', e: customEnd || '' });
@@ -929,22 +1237,10 @@ function Performance({ onSelectDate, onWallet, account, trades, period, setPerio
                         const n = new Date();
                         setView({ y: n.getFullYear(), m: n.getMonth() });
                     } } }))),
-        React.createElement("div", { className: "chart-card" },
-            period === 'Custom date range' && customStart && customEnd && React.createElement("div", { className: "range-caption" },
-                fmtLong(customStart),
-                " - ",
-                fmtLong(customEnd)),
-            React.createElement("svg", { viewBox: "0 0 500 160", preserveAspectRatio: "none" },
-                React.createElement("defs", null,
-                    React.createElement("linearGradient", { id: "curveFill", x1: "0", x2: "0", y1: "0", y2: "1" },
-                        React.createElement("stop", { offset: "0", stopColor: "#5d83ff", stopOpacity: ".35" }),
-                        React.createElement("stop", { offset: "1", stopColor: "#5d83ff", stopOpacity: "0" }))),
-                React.createElement("path", { d: `M0 160 L${points.split(' ').map(p => p.replace(',', ' ')).join(' L')} L500 160Z`, fill: "url(#curveFill)" }),
-                React.createElement("polyline", { points: points, fill: "none", stroke: "#6b8dff", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round" })),
-            React.createElement("div", { className: "chart-labels" },
-                React.createElement("span", null, filtered[0] ? new Date(filtered[0].date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }) : 'No data'),
-                React.createElement("span", null, filtered.length ? new Date(filtered[Math.floor(filtered.length / 2)].date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }) : '—'),
-                React.createElement("span", null, filtered.length ? new Date(filtered[filtered.length - 1].date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }) : '—'))),
+        period === 'Custom date range' && customStart && customEnd && React.createElement("div", { className: "range-caption left" },
+            fmtLong(customStart),
+            " - ",
+            fmtLong(customEnd)),
         React.createElement("div", { className: "section-row" },
             React.createElement("h2", null, "Key metrics"),
             React.createElement("span", { className: "muted" },
@@ -958,6 +1254,20 @@ function Performance({ onSelectDate, onWallet, account, trades, period, setPerio
             React.createElement(Metric, { tone: maxDd > 0 ? 'neg' : '', label: "Max drawdown", value: money(maxDd, account.currency), sub: `${pct(-maxDd, account.balance)} from peak`, icon: React.createElement(TrendingDown, null), accent: "orange" }),
             React.createElement(Metric, { tone: hwm > 0 ? 'pos' : '', label: "High water mark", value: `${hwm > 0 ? '+' : ''}${money(hwm, account.currency)}`, sub: `${pct(hwm, account.balance)} profit tertinggi`, icon: React.createElement(TrendingUp, null), accent: "green" })),
         React.createElement(PerfExtra, { account: account, trades: trades, filtered: filtered, total: total, maxDd: maxDd, onSelectDate: onSelectDate, view: view, onPickMonth: pickMonth, onResetAll: () => setPeriod('All time'), rangeText: period === 'Custom date range' && customStart && customEnd ? `${fmtLong(customStart)} – ${fmtLong(customEnd)}` : '' }),
+        shareOpen && ReactDOM.createPortal(React.createElement("div", { className: "modal-backdrop center top", onClick: e => { if (e.target === e.currentTarget) {
+                setShareOpen(false);
+                setShareUrl('');
+            } } },
+            React.createElement("div", { className: "share-sheet" },
+                React.createElement("div", { className: "tsel-title" }, "Bagikan ke Story"),
+                shareUrl ? React.createElement("img", { src: shareUrl, className: "share-img", alt: "Pratinjau gambar" }) : React.createElement("div", { className: "pe-empty" }, "Menyiapkan gambar\u2026"),
+                React.createElement("label", { className: "share-opt" },
+                    React.createElement("input", { type: "checkbox", checked: shareHide, onChange: e => { setShareUrl(''); setShareHide(e.target.checked); } }),
+                    " Sembunyikan nominal uang (tampilkan persen saja)"),
+                React.createElement("div", { className: "dp-actions share-actions" },
+                    React.createElement("button", { type: "button", onClick: () => { setShareOpen(false); setShareUrl(''); } }, "Tutup"),
+                    React.createElement("button", { type: "button", onClick: saveShare }, "Simpan"),
+                    React.createElement("button", { type: "button", className: "primary", onClick: doShare }, "Bagikan")))), document.body),
         rangeOpen && React.createElement("div", { className: "modal-backdrop center" },
             React.createElement("div", { className: "range-dialog" },
                 React.createElement("h3", null, "Custom Date Range"),
